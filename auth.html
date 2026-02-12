@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskly | Acceso</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/style.css">
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: auto;
+        }
+
+        .auth-toggle {
+            display: flex;
+            margin-bottom: 30px;
+            background: var(--slate-100);
+            padding: 4px;
+            border-radius: 12px;
+        }
+
+        .auth-toggle button {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: 8px;
+        }
+
+        .auth-toggle button.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-group input {
+            padding: 14px;
+            border: 1px solid var(--slate-200);
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container auth-container">
+        <header class="app-header" style="justify-content: center;">
+            <div class="logo-area" style="text-align: center;">
+                <h1>Taskly<span>asistente</span></h1>
+            </div>
+        </header>
+
+        <div class="auth-toggle">
+            <button id="toggleLogin" class="active" onclick="showLogin()">Entrar</button>
+            <button id="toggleRegister" onclick="showRegister()">Registrarse</button>
+        </div>
+
+        <form id="authForm" onsubmit="handleAuth(event)">
+            <div class="form-group">
+                <label for="email">Correo Electrónico</label>
+                <input type="email" id="email" placeholder="nombre@ejemplo.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                <span id="submitText">Iniciar Sesión</span>
+            </button>
+            <p id="authError" class="error-message"></p>
+        </form>
+    </div>
+
+    <script type="module" src="js/auth.js"></script>
+</body>
+
+</html>
