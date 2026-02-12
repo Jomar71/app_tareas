@@ -28,8 +28,24 @@ window.filtrarTareas = function (filtro) {
     gestorTareas.filtrarTareas(filtro);
 }
 
+// Redirigir si no hay token
+if (!localStorage.getItem('taskly_token')) {
+    window.location.href = 'auth.html';
+}
+
+window.logout = function () {
+    localStorage.removeItem('taskly_token');
+    localStorage.removeItem('taskly_user');
+    window.location.href = 'auth.html';
+}
+
 // Inicialización cuando se carga la página
 document.addEventListener('DOMContentLoaded', function () {
+    const user = JSON.parse(localStorage.getItem('taskly_user'));
+    if (user) {
+        document.getElementById('userEmail').textContent = user.email;
+    }
+
     gestorTareas = new GestorTareas();
     window.gestorTareas = gestorTareas; // Para acceso desde los onchange/onclick en el HTML
     actualizarFecha();
@@ -39,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const ahora = new Date();
     const offset = ahora.getTimezoneOffset();
     const ahoraLocal = new Date(ahora.getTime() - (offset * 60 * 1000));
-    document.getElementById('fechaTarea').value = ahoraLocal.toISOString().split('T');
+    document.getElementById('fechaTarea').value = ahoraLocal.toISOString().split('T')[0];
     document.getElementById('horaTarea').value = ahoraLocal.toISOString().substring(11, 16);
 
     // Enter para agregar tarea

@@ -89,7 +89,33 @@ body {
     font-weight: 400;
 }
 
+/* User Info & Logout */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#userEmail {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.btn-logout {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: color 0.2s;
+    padding: 4px;
+}
+
+.btn-logout:hover {
+    color: var(--danger);
+}
+
 /* Command Center (Input Area) */
+
 .command-center {
     background: white;
     padding: 24px;
