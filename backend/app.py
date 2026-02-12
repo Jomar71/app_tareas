@@ -18,6 +18,10 @@ from models import limiter
 limiter.init_app(app)
 
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({'status': 'ok', 'message': 'Taskly Backend is running'}), 200
+
 # Registrar rutas de autenticación
 app.register_blueprint(auth_bp, url_prefix='/auth')
 

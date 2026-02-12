@@ -1,6 +1,14 @@
+console.log("Taskly Auth Module Loaded");
 import { api } from './api.js';
 
+// Alertar si hay problemas de carga (común en file://)
+window.onerror = function () {
+    alert("Error al cargar los módulos de seguridad. Asegúrate de usar un servidor local (como Live Server) o que el backend esté activo.");
+};
+
 let currentMode = 'LOGIN';
+
+
 
 window.showLogin = function () {
     currentMode = 'LOGIN';
@@ -32,10 +40,17 @@ window.handleAuth = async function (event) {
     event.preventDefault();
     hideError();
 
+    const btn = document.querySelector('.btn-primary');
+    const originalText = document.getElementById('submitText').textContent;
+
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
     try {
+        // Set loading state
+        btn.disabled = true;
+        document.getElementById('submitText').textContent = 'Procesando...';
+
         if (currentMode === 'LOGIN') {
             const response = await api.login(email, password);
             localStorage.setItem('taskly_token', response.token);
@@ -48,8 +63,12 @@ window.handleAuth = async function (event) {
         }
     } catch (error) {
         showError(error.message || 'Error al procesar la solicitud');
+    } finally {
+        btn.disabled = false;
+        document.getElementById('submitText').textContent = originalText;
     }
 }
+
 
 // Redirigir si ya está logueado
 if (localStorage.getItem('taskly_token')) {

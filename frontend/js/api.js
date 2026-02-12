@@ -1,7 +1,10 @@
-// Para desarrollo local: http://localhost:5000
-const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:5000'
-    : 'https://tu-backend-api.onrender.com';
+// Detectar el entorno de la API
+const isLocal = window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.protocol === 'file:';
+
+const API_URL = isLocal ? 'http://localhost:5000' : 'https://tu-backend-api.onrender.com';
+
 
 async function fetchAPI(endpoint, options = {}) {
     const token = localStorage.getItem('taskly_token');
@@ -34,6 +37,10 @@ async function fetchAPI(endpoint, options = {}) {
 
         return await response.json();
     } catch (error) {
+        if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+            console.error('Error de conexión: El backend no responde. Verifica que esté corriendo en http://localhost:5000');
+            throw new Error('No se pudo conectar con el servidor. Por favor, asegúrate de que el backend esté activo.');
+        }
         console.error('Error de conexión con la API:', error);
         throw error;
     }
