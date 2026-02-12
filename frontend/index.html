@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskly | Tu Asistente Inteligente</title>
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/mobile.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="app-header">
+            <div class="logo-area">
+                <h1>Taskly<span>asistente</span></h1>
+                <p class="fecha-hoy" id="fechaActual"></p>
+            </div>
+            <div class="header-stats" id="headerStats">
+                <!-- Stats flow here -->
+            </div>
+        </header>
+
+        <section class="command-center" aria-label="Agregar nueva tarea">
+            <div class="input-main-group">
+                <input type="text" id="nuevaTarea" placeholder="¿Qué vamos a lograr hoy?" maxlength="100">
+                <button id="btnVoz" onclick="iniciarReconocimientoVoz()" title="Dictar tarea">🎤</button>
+            </div>
+
+            <div class="input-details-group">
+                <div class="detail-item">
+                    <label for="fechaTarea">Cuándo</label>
+                    <input type="date" id="fechaTarea">
+                </div>
+                <div class="detail-item">
+                    <label for="horaTarea">Hora</label>
+                    <input type="time" id="horaTarea">
+                </div>
+                <div class="detail-item">
+                    <label for="prioridadTarea">Prioridad</label>
+                    <select id="prioridadTarea">
+                        <option value="BAJA">Baja</option>
+                        <option value="MEDIA" selected>Media</option>
+                        <option value="ALTA">Alta</option>
+                    </select>
+                </div>
+                <button class="btn-primary" onclick="agregarTarea()">
+                    <span>➕</span> Agregar
+                </button>
+            </div>
+        </section>
+
+        <nav class="filters-nav" aria-label="Filtrar tareas">
+            <button class="filtro-btn active" onclick="filtrarTareas('TODAS')">Todas</button>
+            <button class="filtro-btn" onclick="filtrarTareas('PENDIENTES')">Pendientes</button>
+            <button class="filtro-btn" onclick="filtrarTareas('COMPLETADAS')">Completadas</button>
+        </nav>
+
+        <div class="estadisticas">
+            <span id="contadorTareas">Total: 0 | Pendientes: 0 | Completadas: 0</span>
+        </div>
+
+        <div class="lista-tareas" id="listaTareas">
+            <!-- Las tareas se cargan aquí dinámicamente -->
+        </div>
+
+        <div class="sin-tareas" id="sinTareas" style="display: none;">
+            <p>🎉 ¡No hay tareas pendientes para hoy!</p>
+        </div>
+
+        <footer class="main-footer">
+            <p>© 2026 jomar71 • <a href="mailto:jomar71.dev@gmail.com">jomar71.dev@gmail.com</a></p>
+        </footer>
+    </div>
+
+
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>

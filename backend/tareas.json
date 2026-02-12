@@ -1,0 +1,28 @@
+{
+  "tareas": [
+    {
+      "id": 1,
+      "descripcion": "fukhhio",
+      "prioridad": "ALTA",
+      "fecha": "2025-09-29",
+      "completada": false,
+      "fecha_creacion": "2025-09-29 17:23:37"
+    },
+    {
+      "id": 2,
+      "descripcion": "hgjhgjh",
+      "prioridad": "BAJA",
+      "fecha": "2025-09-29",
+      "completada": false,
+      "fecha_creacion": "2025-09-29 17:25:58"
+    },
+    {
+      "id": 3,
+      "descripcion": "fkopfk\u00b4pwle\u00b4wpw",
+      "prioridad": "ALTA",
+      "fecha": "2025-09-29",
+      "completada": false,
+      "fecha_creacion": "2025-09-29 17:31:58"
+    }
+  ]
+}
