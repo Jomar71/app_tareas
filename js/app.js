@@ -49,6 +49,15 @@ window.logout = function () {
 // Inicialización cuando se carga la página
 document.addEventListener('DOMContentLoaded', function () {
     console.log('Taskly: Iniciando aplicación...');
+
+    // Auto-corrección: Limpiar basura de versiones anteriores si existe
+    if (localStorage.getItem('taskly_token') === 'undefined' || localStorage.getItem('taskly_user') === 'undefined') {
+        console.warn('Taskly: Detectada sesión corrupta, limpiando...');
+        localStorage.removeItem('taskly_token');
+        localStorage.removeItem('taskly_user');
+        window.location.reload();
+        return;
+    }
     const user = JSON.parse(localStorage.getItem('taskly_user'));
     if (user) {
         document.getElementById('userEmail').textContent = user.email;
