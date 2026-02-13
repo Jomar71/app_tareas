@@ -3,24 +3,7 @@ import { actualizarFecha } from './ui.js?v=1.2';
 
 let gestorTareas;
 
-// Consola de depuración visual
-function logToUI(msg, isError = false) {
-    console.log(msg);
-    const log = document.getElementById('debug-log');
-    if (log) {
-        const div = document.createElement('div');
-        div.style.color = isError ? '#ff5555' : '#00ff00';
-        div.textContent = `> ${msg}`;
-        log.appendChild(div);
-        document.getElementById('debug-console').style.display = 'block';
-    }
-}
-
-window.onerror = (msg, url, line) => logToUI(`ERROR CRÍTICO: ${msg} en ${url}:${line}`, true);
-logToUI('Cargando módulos JS...');
-
 window.agregarTarea = async function () {
-    logToUI('Botón Agregar presionado');
     try {
         const input = document.getElementById('nuevaTarea');
         const select = document.getElementById('prioridadTarea');
@@ -64,11 +47,9 @@ window.logout = function () {
 
 // Inicialización cuando se carga la página
 document.addEventListener('DOMContentLoaded', function () {
-    logToUI('DOM Cargado. Inicializando...');
 
     // Auto-corrección: Limpiar basura de versiones anteriores si existe
     if (localStorage.getItem('taskly_token') === 'undefined' || localStorage.getItem('taskly_user') === 'undefined') {
-        logToUI('Sesión corrupta detectada. Limpiando...', true);
         localStorage.removeItem('taskly_token');
         localStorage.removeItem('taskly_user');
         window.location.reload();
@@ -98,12 +79,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Asegurar que al hacer clic en cualquier parte del selector se abra el picker
     [fechaInput, horaInput].forEach(el => {
         el.addEventListener('click', () => {
-            console.log(`Taskly: Abriendo selector para ${el.id}`);
             try {
                 if (el.showPicker) el.showPicker();
                 else el.focus();
             } catch (e) {
-                console.warn('showPicker no disponible, usando focus normal');
                 el.focus();
             }
         });
@@ -114,7 +93,6 @@ document.addEventListener('DOMContentLoaded', function () {
         label.addEventListener('click', (e) => {
             const id = label.getAttribute('for');
             const target = document.getElementById(id);
-            console.log(`Taskly: Clic en etiqueta para ${id}`);
             if (target) {
                 try {
                     if (target.showPicker) target.showPicker();
