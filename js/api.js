@@ -75,7 +75,6 @@ const mockApi = {
 
 async function fetchAPI(endpoint, options = {}) {
     if (useMock) {
-        showStatusInfo();
         return handleMockRequest(endpoint, options);
     }
 
@@ -110,41 +109,10 @@ async function fetchAPI(endpoint, options = {}) {
         if (!isLocal && (error.name === 'TypeError' || error.name === 'AbortError')) {
             console.warn("Backend no responde. Pasando a Modo Offline Local.");
             useMock = true;
-            showStatusInfo();
             return handleMockRequest(endpoint, options);
         }
         throw error;
     }
-}
-
-function showStatusInfo() {
-    if (document.getElementById('cloud-status')) return;
-    const banner = document.createElement('div');
-    banner.id = 'cloud-status';
-    // Estrictamente fixed y con dimensiones forzadas para evitar el "bloque verde" lateral
-    banner.style.cssText = `
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 30px !important;
-        background: #1b5e20 !important;
-        color: white !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-size: 11px !important;
-        font-weight: 500 !important;
-        z-index: 2147483647 !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
-        border-bottom: 2px solid #2e7d32 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        box-sizing: border-box !important;
-        pointer-events: none !important;
-    `;
-    banner.innerHTML = "🟢 <b>Modo Autónomo:</b> Tus tareas se guardan en este dispositivo.";
-    document.body.appendChild(banner); // Append al final para que no sea el primer hijo del flex si falla el fixed
 }
 
 function handleMockRequest(endpoint, options) {
@@ -158,6 +126,7 @@ function handleMockRequest(endpoint, options) {
 }
 
 export const api = {
+    isMock: () => useMock,
     login: (email, password) => fetchAPI('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
     register: (email, password) => fetchAPI('/auth/register', { method: 'POST', body: JSON.stringify({ email, password }) }),
     getTareas: () => fetchAPI('/tareas/hoy'),

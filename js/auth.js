@@ -1,5 +1,5 @@
 console.log("Taskly Auth Module Loaded");
-import { api } from './api.js';
+import { api } from './api.js?v=1.2';
 
 // Alertar si hay problemas de carga (común en file://)
 window.onerror = function () {

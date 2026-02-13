@@ -1,5 +1,5 @@
-import { GestorTareas } from './tareas.js';
-import { actualizarFecha } from './ui.js';
+import { GestorTareas } from './tareas.js?v=1.2';
+import { actualizarFecha } from './ui.js?v=1.2';
 
 let gestorTareas;
 
