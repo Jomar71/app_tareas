@@ -121,9 +121,13 @@ function showStatusInfo() {
     if (document.getElementById('cloud-status')) return;
     const banner = document.createElement('div');
     banner.id = 'cloud-status';
-    banner.style = "background: #2e7d32; color: white; padding: 8px; text-align: center; font-size: 13px; font-weight: 500; position: sticky; top: 0; z-index: 10000; box-shadow: 0 2px 4px rgba(0,0,0,0.2);";
-    banner.innerHTML = "🟢 Modo Autónomo Activo: Funcionando 24/7 sin servidor.";
+    // Usar fixed para no empujar el contenido y evitar el bloque lateral verde
+    banner.style = "position: fixed; top: 0; left: 0; width: 100%; background: #1b5e20; color: white; padding: 6px 10px; text-align: center; font-size: 11px; font-weight: 500; z-index: 100000; box-shadow: 0 2px 8px rgba(0,0,0,0.3); border-bottom: 2px solid white;";
+    banner.innerHTML = "🟢 <b>Modo Autónomo:</b> Tus tareas se guardan en este dispositivo.";
     document.body.prepend(banner);
+
+    // Añadir un pequeño padding al body para que el banner no cubra el header
+    document.body.style.paddingTop = (parseInt(getComputedStyle(document.body).paddingTop) + 30) + 'px';
 }
 
 function handleMockRequest(endpoint, options) {
