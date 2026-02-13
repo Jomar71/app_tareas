@@ -3,25 +3,32 @@ import { actualizarFecha } from './ui.js';
 
 let gestorTareas;
 
-window.agregarTarea = function () {
-    const input = document.getElementById('nuevaTarea');
-    const select = document.getElementById('prioridadTarea');
-    const fechaInput = document.getElementById('fechaTarea');
-    const horaInput = document.getElementById('horaTarea');
+window.agregarTarea = async function () {
+    console.log('Taskly: Intentando agregar tarea...');
+    try {
+        const input = document.getElementById('nuevaTarea');
+        const select = document.getElementById('prioridadTarea');
+        const fechaInput = document.getElementById('fechaTarea');
+        const horaInput = document.getElementById('horaTarea');
 
-    const descripcion = input.value.trim();
-    const prioridad = select.value;
-    const fecha = fechaInput.value;
-    const hora = horaInput.value;
+        const descripcion = input.value.trim();
+        const prioridad = select.value;
+        const fecha = fechaInput.value;
+        const hora = horaInput.value;
 
-    if (descripcion === '') {
-        alert('Por favor, escribe una tarea');
-        return;
+        if (descripcion === '') {
+            alert('Por favor, escribe una tarea');
+            return;
+        }
+
+        await gestorTareas.agregarTarea(descripcion, prioridad, `${fecha} ${hora}`);
+        input.value = '';
+        input.focus();
+        console.log('Taskly: Tarea agregada con éxito');
+    } catch (error) {
+        console.error('Taskly: Error al agregar tarea:', error);
+        alert('Hubo un error al guardar la tarea. Revisa la consola.');
     }
-
-    gestorTareas.agregarTarea(descripcion, prioridad, `${fecha} ${hora}`);
-    input.value = '';
-    input.focus();
 }
 
 window.filtrarTareas = function (filtro) {
@@ -66,7 +73,14 @@ document.addEventListener('DOMContentLoaded', function () {
     // Asegurar que al hacer clic en cualquier parte del selector se abra el picker
     [fechaInput, horaInput].forEach(el => {
         el.addEventListener('click', () => {
-            if (el.showPicker) el.showPicker();
+            console.log(`Taskly: Abriendo selector para ${el.id}`);
+            try {
+                if (el.showPicker) el.showPicker();
+                else el.focus();
+            } catch (e) {
+                console.warn('showPicker no disponible, usando focus normal');
+                el.focus();
+            }
         });
     });
 
@@ -75,7 +89,15 @@ document.addEventListener('DOMContentLoaded', function () {
         label.addEventListener('click', (e) => {
             const id = label.getAttribute('for');
             const target = document.getElementById(id);
-            if (target && target.showPicker) target.showPicker();
+            console.log(`Taskly: Clic en etiqueta para ${id}`);
+            if (target) {
+                try {
+                    if (target.showPicker) target.showPicker();
+                    else target.focus();
+                } catch (err) {
+                    target.focus();
+                }
+            }
         });
     });
 
