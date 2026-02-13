@@ -1,7 +1,7 @@
 export function actualizarListaTareas(tareas) {
     const lista = document.getElementById('listaTareas');
     const sinTareas = document.getElementById('sinTareas');
-    
+
     if (tareas.length === 0) {
         lista.style.display = 'none';
         sinTareas.style.display = 'flex';
@@ -14,10 +14,10 @@ export function actualizarListaTareas(tareas) {
         `;
         return;
     }
-    
+
     lista.style.display = 'flex';
     sinTareas.style.display = 'none';
-    
+
     lista.innerHTML = tareas.map(tarea => {
         const fecha = tarea.fecha_programada ? new Date(tarea.fecha_programada) : null;
         const fechaFormateada = fecha ? fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : '';
@@ -46,11 +46,12 @@ export function actualizarListaTareas(tareas) {
     }).join('');
 }
 
-export function actualizarEstadisticas(estadisticas) {
+export function actualizarEstadisticas(estadisticas, isMock = false) {
     const contador = document.getElementById('contadorTareas');
     const headerStats = document.getElementById('headerStats');
-    
+
     const statsHTML = `
+        ${isMock ? '<div class="stat-pill" style="background:#2e7d32; color:white; border:none;">🟢 Local</div>' : ''}
         <div class="stat-pill total">
             <span>${estadisticas.total}</span> Total
         </div>
@@ -58,7 +59,7 @@ export function actualizarEstadisticas(estadisticas) {
             <span>${estadisticas.pendientes}</span> Pendientes
         </div>
     `;
-    
+
     if (headerStats) headerStats.innerHTML = statsHTML;
     if (contador) contador.textContent = `Progreso: ${estadisticas.completadas}/${estadisticas.total} completadas`;
 }

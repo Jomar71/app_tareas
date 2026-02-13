@@ -1,5 +1,5 @@
-import { api } from './api.js';
-import { actualizarListaTareas, actualizarEstadisticas, actualizarFiltros } from './ui.js';
+import { api } from './api.js?v=1.2';
+import { actualizarListaTareas, actualizarEstadisticas, actualizarFiltros } from './ui.js?v=1.2';
 
 export class GestorTareas {
     constructor() {
@@ -54,14 +54,14 @@ export class GestorTareas {
         const total = this.tareas.length;
         const completadas = this.tareas.filter(t => t.completada).length;
         const pendientes = total - completadas;
-        
+
         return { total, completadas, pendientes };
     }
 
     actualizarUI() {
         // Esta función se implementa en ui.js
         actualizarListaTareas(this.obtenerTareasFiltradas());
-        actualizarEstadisticas(this.obtenerEstadisticas());
+        actualizarEstadisticas(this.obtenerEstadisticas(), api.isMock());
         actualizarFiltros(this.filtroActual);
     }
 }
