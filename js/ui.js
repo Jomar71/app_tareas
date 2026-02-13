@@ -51,7 +51,6 @@ export function actualizarEstadisticas(estadisticas, isMock = false) {
     const headerStats = document.getElementById('headerStats');
 
     const statsHTML = `
-        ${isMock ? '<div class="stat-pill" style="background:#2e7d32; color:white; border:none;">🟢 Local</div>' : ''}
         <div class="stat-pill total">
             <span>${estadisticas.total}</span> Total
         </div>
