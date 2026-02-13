@@ -1,6 +1,8 @@
 // Detectar el entorno de la API
 const isLocal = window.location.hostname === 'localhost' ||
     window.location.hostname === '127.0.0.1' ||
+    window.location.hostname.startsWith('192.168.') ||
+    window.location.hostname.startsWith('10.') ||
     window.location.protocol === 'file:';
 
 const API_URL = isLocal ? 'http://localhost:5000' : 'https://tu-backend-api.onrender.com';
@@ -19,11 +21,16 @@ async function fetchAPI(endpoint, options = {}) {
 
     options.headers = { ...defaultHeaders, ...options.headers };
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+    options.signal = controller.signal;
+
     try {
         const response = await fetch(`${API_URL}${endpoint}`, options);
+        clearTimeout(timeoutId);
 
         if (response.status === 401 && !endpoint.includes('/auth/')) {
-            // Token expirado o inválido, redirigir al login
             localStorage.removeItem('taskly_token');
             localStorage.removeItem('taskly_user');
             window.location.href = 'auth.html';
@@ -37,11 +44,15 @@ async function fetchAPI(endpoint, options = {}) {
 
         return await response.json();
     } catch (error) {
-        if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-            console.error('Error de conexión: El backend no responde. Verifica que esté corriendo en http://localhost:5000');
-            throw new Error('No se pudo conectar con el servidor. Por favor, asegúrate de que el backend esté activo.');
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+            throw new Error(`La conexión con el servidor (${API_URL}) tardó demasiado. ¿Está el backend encendido?`);
         }
-        console.error('Error de conexión con la API:', error);
+        if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+            const context = isLocal ? 'Asegúrate de que el backend esté corriendo en http://localhost:5000' : `El servidor remoto en ${API_URL} no responde o está mal configurado.`;
+            console.error(`Error de conexión con ${API_URL}: El backend no responde.`);
+            throw new Error(`No se pudo conectar con el servidor (${isLocal ? 'Local' : 'Remoto'}). Intenta abrir la app usando Live Server o localhost. ${context}`);
+        }
         throw error;
     }
 }
