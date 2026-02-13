@@ -121,13 +121,30 @@ function showStatusInfo() {
     if (document.getElementById('cloud-status')) return;
     const banner = document.createElement('div');
     banner.id = 'cloud-status';
-    // Usar fixed para no empujar el contenido y evitar el bloque lateral verde
-    banner.style = "position: fixed; top: 0; left: 0; width: 100%; background: #1b5e20; color: white; padding: 6px 10px; text-align: center; font-size: 11px; font-weight: 500; z-index: 100000; box-shadow: 0 2px 8px rgba(0,0,0,0.3); border-bottom: 2px solid white;";
+    // Estrictamente fixed y con dimensiones forzadas para evitar el "bloque verde" lateral
+    banner.style.cssText = `
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 30px !important;
+        background: #1b5e20 !important;
+        color: white !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 11px !important;
+        font-weight: 500 !important;
+        z-index: 2147483647 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
+        border-bottom: 2px solid #2e7d32 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        pointer-events: none !important;
+    `;
     banner.innerHTML = "🟢 <b>Modo Autónomo:</b> Tus tareas se guardan en este dispositivo.";
-    document.body.prepend(banner);
-
-    // Añadir un pequeño padding al body para que el banner no cubra el header
-    document.body.style.paddingTop = (parseInt(getComputedStyle(document.body).paddingTop) + 30) + 'px';
+    document.body.appendChild(banner); // Append al final para que no sea el primer hijo del flex si falla el fixed
 }
 
 function handleMockRequest(endpoint, options) {
