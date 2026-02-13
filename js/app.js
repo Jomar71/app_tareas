@@ -41,6 +41,7 @@ window.logout = function () {
 
 // Inicialización cuando se carga la página
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('Taskly: Iniciando aplicación...');
     const user = JSON.parse(localStorage.getItem('taskly_user'));
     if (user) {
         document.getElementById('userEmail').textContent = user.email;
