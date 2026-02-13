@@ -55,8 +55,28 @@ document.addEventListener('DOMContentLoaded', function () {
     const ahora = new Date();
     const offset = ahora.getTimezoneOffset();
     const ahoraLocal = new Date(ahora.getTime() - (offset * 60 * 1000));
-    document.getElementById('fechaTarea').value = ahoraLocal.toISOString().split('T')[0];
-    document.getElementById('horaTarea').value = ahoraLocal.toISOString().substring(11, 16);
+    const fechaInput = document.getElementById('fechaTarea');
+    const horaInput = document.getElementById('horaTarea');
+    const priorityInput = document.getElementById('prioridadTarea');
+
+    fechaInput.value = ahoraLocal.toISOString().split('T')[0];
+    horaInput.value = ahoraLocal.toISOString().substring(11, 16);
+
+    // Asegurar que al hacer clic en cualquier parte del selector se abra el picker
+    [fechaInput, horaInput].forEach(el => {
+        el.addEventListener('click', () => {
+            if (el.showPicker) el.showPicker();
+        });
+    });
+
+    // También abrir al hacer clic en el label
+    document.querySelectorAll('.detail-item label').forEach(label => {
+        label.addEventListener('click', (e) => {
+            const id = label.getAttribute('for');
+            const target = document.getElementById(id);
+            if (target && target.showPicker) target.showPicker();
+        });
+    });
 
     // Enter para agregar tarea
     document.getElementById('nuevaTarea').addEventListener('keypress', function (e) {

@@ -284,13 +284,6 @@ body {
     gap: 6px;
 }
 
-.detail-item label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-}
-
 .detail-item input,
 .detail-item select {
     border: 1px solid var(--slate-200);
@@ -299,6 +292,23 @@ body {
     font-size: 0.9rem;
     outline: none;
     background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.detail-item input:hover,
+.detail-item select:hover {
+    border-color: var(--primary);
+    background: var(--indigo-50);
+}
+
+.detail-item label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    cursor: pointer;
 }
 
 .btn-primary {

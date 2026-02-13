@@ -8,33 +8,40 @@ const isLocal = window.location.hostname === 'localhost' ||
 // URL de producción (Solo activa si no es localhost)
 const API_URL = isLocal ? 'http://localhost:5000' : 'https://tu-backend-api.onrender.com';
 
-// Sistema de persistencia local (Fallback para GH Pages sin backend)
+// Sistema de persistencia local (Fallback para funcionalidad 100% offline)
 const getLocalData = (key, defaultVal = []) => JSON.parse(localStorage.getItem(key) || JSON.stringify(defaultVal));
 const setLocalData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+
+// Estado de conexión: Si la URL es de ejemplo, usamos Mock por defecto
+let useMock = !isLocal && API_URL.includes('tu-backend-api');
 
 const mockApi = {
     login: async (email, password) => {
         const users = getLocalData('mock_users');
         const user = users.find(u => u.email === email && u.password === password);
-        if (!user) throw new Error('Credenciales inválidas (Modo Demo)');
+        if (!user) throw new Error('Credenciales inválidas (Modo Local)');
         localStorage.setItem('taskly_token', 'mock-token-' + Date.now());
         localStorage.setItem('taskly_user', JSON.stringify({ email }));
-        return { message: 'Iniciando modo demo' };
+        return { message: 'Iniciando sesión en modo local' };
     },
     register: async (email, password) => {
         const users = getLocalData('mock_users');
-        if (users.some(u => u.email === email)) throw new Error('Usuario ya existe');
+        if (users.some(u => u.email === email)) throw new Error('Este correo ya está registrado localmente');
         users.push({ email, password, id: Date.now() });
         setLocalData('mock_users', users);
         return { message: 'Usuario registrado localmente' };
     },
     getTareas: async () => {
-        const user = JSON.parse(localStorage.getItem('taskly_user'));
+        const userStr = localStorage.getItem('taskly_user');
+        if (!userStr) return [];
+        const user = JSON.parse(userStr);
         const allTareas = getLocalData('mock_tareas');
         return allTareas.filter(t => t.user_email === user.email);
     },
     addTarea: async (descripcion, prioridad, fechaHora) => {
-        const user = JSON.parse(localStorage.getItem('taskly_user'));
+        const userStr = localStorage.getItem('taskly_user');
+        if (!userStr) throw new Error('Debes iniciar sesión');
+        const user = JSON.parse(userStr);
         const tareas = getLocalData('mock_tareas');
         const nueva = {
             id: Date.now(),
@@ -42,7 +49,8 @@ const mockApi = {
             prioridad,
             fecha_programada: fechaHora,
             completada: false,
-            user_email: user.email
+            user_email: user.email,
+            fecha_creacion: new Date().toISOString()
         };
         tareas.push(nueva);
         setLocalData('mock_tareas', tareas);
@@ -62,12 +70,11 @@ const mockApi = {
     }
 };
 
-let useMock = false;
-
 async function fetchAPI(endpoint, options = {}) {
-    if (useMock && !endpoint.includes('/auth/')) {
-        const method = endpoint.split('/')[2]; // Simplista
-        // Redirigir a mockApi si ya estamos en ese modo
+    // Si estamos usando Modo Mock por configuración o falla previa
+    if (useMock) {
+        showStatusInfo();
+        return handleMockRequest(endpoint, options);
     }
 
     const token = localStorage.getItem('taskly_token');
@@ -98,12 +105,11 @@ async function fetchAPI(endpoint, options = {}) {
     } catch (error) {
         clearTimeout(timeoutId);
 
-        // Si falla la conexión y estamos en GH Pages, activamos el Mock automáticamente
+        // Si falla la conexión remota, activamos el Mock automáticamente y reintentamos
         if (!isLocal && (error.name === 'TypeError' || error.name === 'AbortError')) {
-            console.warn("Backend no disponible. Entrando en Modo Demo (Datos locales).");
+            console.warn("Backend no responde. Pasando a Modo Offline Local.");
             useMock = true;
-            showDemoWarning();
-            // Ejecutar la acción en el Mock
+            showStatusInfo();
             return handleMockRequest(endpoint, options);
         }
 
@@ -111,12 +117,12 @@ async function fetchAPI(endpoint, options = {}) {
     }
 }
 
-function showDemoWarning() {
-    if (document.getElementById('demo-warning')) return;
+function showStatusInfo() {
+    if (document.getElementById('cloud-status')) return;
     const banner = document.createElement('div');
-    banner.id = 'demo-warning';
-    banner.style = "background: #ffeb3b; color: #333; padding: 10px; font-weight: bold; text-align: center; font-size: 14px; position: sticky; top: 0; z-index: 1000;";
-    banner.innerHTML = "⚠️ MODO DEMO ACTIVO: Las tareas se guardan solo en este navegador. <a href='https://github.com/Jomar71/app_tareas/blob/main/walkthrough.md' target='_blank'>Configurar Nube aquí</a>";
+    banner.id = 'cloud-status';
+    banner.style = "background: #4caf50; color: white; padding: 6px; text-align: center; font-size: 12px; font-weight: 500;";
+    banner.innerHTML = "💾 Modo Autónomo Activo: Tus tareas se guardan en este dispositivo.";
     document.body.prepend(banner);
 }
 
@@ -130,10 +136,10 @@ function handleMockRequest(endpoint, options) {
 }
 
 export const api = {
-    login: (email, password) => useMock ? mockApi.login(email, password) : fetchAPI('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
-    register: (email, password) => useMock ? mockApi.register(email, password) : fetchAPI('/auth/register', { method: 'POST', body: JSON.stringify({ email, password }) }),
-    getTareas: () => useMock ? mockApi.getTareas() : fetchAPI('/tareas/hoy'),
-    addTarea: (d, p, f) => useMock ? mockApi.addTarea(d, p, f) : fetchAPI('/tareas/agregar', { method: 'POST', body: JSON.stringify({ descripcion: d, prioridad: p, fecha_programada: f }) }),
-    completeTarea: (id) => useMock ? mockApi.completeTarea(id) : fetchAPI(`/tareas/completar/${id}`, { method: 'PUT' }),
-    deleteTarea: (id) => useMock ? mockApi.deleteTarea(id) : fetchAPI(`/tareas/eliminar/${id}`, { method: 'DELETE' }),
+    login: (email, password) => (useMock) ? handleMockRequest('/login', { body: JSON.stringify({ email, password }) }) : fetchAPI('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+    register: (email, password) => (useMock) ? handleMockRequest('/register', { body: JSON.stringify({ email, password }) }) : fetchAPI('/auth/register', { method: 'POST', body: JSON.stringify({ email, password }) }),
+    getTareas: () => fetchAPI('/tareas/hoy'),
+    addTarea: (d, p, f) => fetchAPI('/tareas/agregar', { method: 'POST', body: JSON.stringify({ descripcion: d, prioridad: p, fecha_programada: f }) }),
+    completeTarea: (id) => fetchAPI(`/tareas/completar/${id}`, { method: 'PUT' }),
+    deleteTarea: (id) => fetchAPI(`/tareas/eliminar/${id}`, { method: 'DELETE' }),
 };
