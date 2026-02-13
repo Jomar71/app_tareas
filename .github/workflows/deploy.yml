@@ -4,12 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'index.html'
-      - 'auth.html'
-      - 'js/**'
-      - 'styles/**'
-      - 'assets/**'
 
 permissions:
   contents: write
