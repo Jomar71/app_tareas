@@ -3,8 +3,24 @@ import { actualizarFecha } from './ui.js';
 
 let gestorTareas;
 
+// Consola de depuración visual
+function logToUI(msg, isError = false) {
+    console.log(msg);
+    const log = document.getElementById('debug-log');
+    if (log) {
+        const div = document.createElement('div');
+        div.style.color = isError ? '#ff5555' : '#00ff00';
+        div.textContent = `> ${msg}`;
+        log.appendChild(div);
+        document.getElementById('debug-console').style.display = 'block';
+    }
+}
+
+window.onerror = (msg, url, line) => logToUI(`ERROR CRÍTICO: ${msg} en ${url}:${line}`, true);
+logToUI('Cargando módulos JS...');
+
 window.agregarTarea = async function () {
-    console.log('Taskly: Intentando agregar tarea...');
+    logToUI('Botón Agregar presionado');
     try {
         const input = document.getElementById('nuevaTarea');
         const select = document.getElementById('prioridadTarea');
@@ -48,11 +64,11 @@ window.logout = function () {
 
 // Inicialización cuando se carga la página
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('Taskly: Iniciando aplicación...');
+    logToUI('DOM Cargado. Inicializando...');
 
     // Auto-corrección: Limpiar basura de versiones anteriores si existe
     if (localStorage.getItem('taskly_token') === 'undefined' || localStorage.getItem('taskly_user') === 'undefined') {
-        console.warn('Taskly: Detectada sesión corrupta, limpiando...');
+        logToUI('Sesión corrupta detectada. Limpiando...', true);
         localStorage.removeItem('taskly_token');
         localStorage.removeItem('taskly_user');
         window.location.reload();
