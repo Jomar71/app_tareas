@@ -49,9 +49,16 @@ async function fetchAPI(endpoint, options = {}) {
             throw new Error(`La conexión con el servidor (${API_URL}) tardó demasiado. ¿Está el backend encendido?`);
         }
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-            const context = isLocal ? 'Asegúrate de que el backend esté corriendo en http://localhost:5000' : `El servidor remoto en ${API_URL} no responde o está mal configurado.`;
-            console.error(`Error de conexión con ${API_URL}: El backend no responde.`);
-            throw new Error(`No se pudo conectar con el servidor (${isLocal ? 'Local' : 'Remoto'}). Intenta abrir la app usando Live Server o localhost. ${context}`);
+            let message = `No se pudo conectar con el servidor (${isLocal ? 'Local' : 'Remoto'}). `;
+
+            if (API_URL.includes('tu-backend-api')) {
+                message += "⚠️ ACCIÓN REQUERIDA: Aún no has configurado tu backend real. Por favor, despliega en Render y actualiza la URL en 'js/api.js'.";
+            } else {
+                message += isLocal ? 'Asegúrate de que el backend esté corriendo en http://localhost:5000' : `El servidor remoto en ${API_URL} no responde o está mal configurado.`;
+            }
+
+            console.error(`Error de conexión con ${API_URL}: ${error.message}`);
+            throw new Error(message);
         }
         throw error;
     }
