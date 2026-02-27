@@ -1,5 +1,5 @@
-import { api } from './api.js?v=1.2';
-import { actualizarListaTareas, actualizarEstadisticas, actualizarFiltros } from './ui.js?v=1.2';
+import { api } from './api.js?v=1.3';
+import { actualizarListaTareas, actualizarEstadisticas, actualizarFiltros, generarCalendario } from './ui.js?v=1.3';
 
 export class GestorTareas {
     constructor() {
@@ -63,5 +63,6 @@ export class GestorTareas {
         actualizarListaTareas(this.obtenerTareasFiltradas());
         actualizarEstadisticas(this.obtenerEstadisticas(), api.isMock());
         actualizarFiltros(this.filtroActual);
+        generarCalendario(this.tareas);
     }
 }

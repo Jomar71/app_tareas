@@ -95,7 +95,7 @@ async function fetchAPI(endpoint, options = {}) {
             localStorage.removeItem('taskly_token');
             localStorage.removeItem('taskly_user');
             window.location.href = 'auth.html';
-            return;
+            throw new Error('Sesión expirada. Redirigiendo al login...');
         }
 
         if (!response.ok) {
