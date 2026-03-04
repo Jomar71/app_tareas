@@ -19,6 +19,32 @@
     --radius-lg: 20px;
 }
 
+/* Pastel Blue Theme Variables */
+.theme-blue-pastel {
+    --primary: #a2cfff;
+    --primary-hover: #81b2d6;
+    --bg-app: #e6f0ff;
+    --card-bg: rgba(230, 240, 255, 0.8);
+    --text-main: #1e3a8a;
+    --text-muted: #4a6ea9;
+    --danger: #f8a5a5;
+    --success: #95e1d3;
+    --warning: #fce38a;
+}
+
+/* Pastel Green Theme Variables */
+.theme-green-pastel {
+    --primary: #a8e6cf;
+    --primary-hover: #88d4bb;
+    --bg-app: #f0fff4;
+    --card-bg: rgba(240, 255, 244, 0.8);
+    --text-main: #1a5d57;
+    --text-muted: #4a7c59;
+    --danger: #ffd3d3;
+    --success: #b8eacb;
+    --warning: #fdfcdc;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -40,6 +66,24 @@ body {
     color: var(--text-main);
 }
 
+/* Apply pastel blue theme styles */
+.theme-blue-pastel body {
+    background-image:
+        radial-gradient(at 0% 0%, hsla(200, 100%, 80%, 0.5) 0, transparent 50%),
+        radial-gradient(at 50% 0%, hsla(210, 70%, 85%, 0.5) 0, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(180, 60%, 90%, 0.5) 0, transparent 50%);
+    color: var(--text-main);
+}
+
+/* Apply pastel green theme styles */
+.theme-green-pastel body {
+    background-image:
+        radial-gradient(at 0% 0%, hsla(120, 60%, 80%, 0.5) 0, transparent 50%),
+        radial-gradient(at 50% 0%, hsla(100, 50%, 85%, 0.5) 0, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(140, 65%, 80%, 0.5) 0, transparent 50%);
+    color: var(--text-main);
+}
+
 .container {
     width: 100%;
     max-width: 700px;
@@ -53,6 +97,13 @@ body {
     display: flex;
     flex-direction: column;
     gap: 32px;
+}
+
+/* Apply pastel theme container styles */
+.theme-blue-pastel .container,
+.theme-green-pastel .container {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 /* Header Styles */
@@ -70,6 +121,20 @@ body {
     background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -1px;
+}
+
+.theme-blue-pastel .logo-area h1 {
+    background: linear-gradient(to right, #7fb6dd, #a2cfff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.theme-green-pastel .logo-area h1 {
+    background: linear-gradient(to right, #7fb6a3, #a8e6cf);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .logo-area h1 span {

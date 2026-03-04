@@ -98,6 +98,48 @@
         html.light-theme .bg-slate-800 { background-color: #f1f5f9 !important; }
         html.light-theme .border-white\/5 { border-color: #e2e8f0 !important; }
         html.light-theme .hover\:text-white:hover { color: #0f172a !important; }
+        
+        /* Blue Pastel Theme */
+        html.theme-blue-pastel body { background-color: #e0e7ff; }
+        html.theme-blue-pastel .bg-bg-dark { background-color: #e0e7ff !important; }
+        html.theme-blue-pastel .bg-card-dark { background-color: #ffffff !important; border-color: #c7d2fe !important; }
+        html.theme-blue-pastel .text-white { color: #3730a3 !important; }
+        html.theme-blue-pastel .text-slate-300 { color: #4f46e5 !important; }
+        html.theme-blue-pastel .border-indigo-900\/30 { border-color: #a5b4fc !important; }
+        html.theme-blue-pastel .border-indigo-900\/40 { border-color: #a5b4fc !important; }
+        html.theme-blue-pastel .border-indigo-900\/50 { border-color: #a5b4fc !important; }
+        html.theme-blue-pastel .bg-indigo-950\/20 { background-color: #ede9fe !important; border-color: #ddd6fe !important; }
+        html.theme-blue-pastel .bg-slate-900\/50 { background-color: #c7d2fe !important; }
+        html.theme-blue-pastel .bg-slate-900\/30 { background-color: #f0f9ff !important; }
+        html.theme-blue-pastel .bg-slate-950\/60 { background-color: #ffffff !important; color: #312e81 !important; }
+        html.theme-blue-pastel .bg-indigo-900\/20 { background-color: #e0e7ff !important; border-color: #a5b4fc !important; }
+        html.theme-blue-pastel .hover\:bg-indigo-900\/30:hover { background-color: #c7d2fe !important; }
+        html.theme-blue-pastel .bg-slate-900\/20 { background-color: #e0e7ff !important; color: #6366f1 !important; }
+        html.theme-blue-pastel .executive-glow { box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.1), 0 4px 6px -2px rgba(79, 70, 229, 0.05) !important; }
+        html.theme-blue-pastel .bg-slate-800 { background-color: #e0e7ff !important; }
+        html.theme-blue-pastel .border-white\/5 { border-color: #c7d2fe !important; }
+        html.theme-blue-pastel .hover\:text-white:hover { color: #3730a3 !important; }
+        
+        /* Green Pastel Theme */
+        html.theme-green-pastel body { background-color: #dcfce7; }
+        html.theme-green-pastel .bg-bg-dark { background-color: #dcfce7 !important; }
+        html.theme-green-pastel .bg-card-dark { background-color: #ffffff !important; border-color: #bbf7d0 !important; }
+        html.theme-green-pastel .text-white { color: #14532d !important; }
+        html.theme-green-pastel .text-slate-300 { color: #16a34a !important; }
+        html.theme-green-pastel .border-indigo-900\/30 { border-color: #86efac !important; }
+        html.theme-green-pastel .border-indigo-900\/40 { border-color: #86efac !important; }
+        html.theme-green-pastel .border-indigo-900\/50 { border-color: #86efac !important; }
+        html.theme-green-pastel .bg-indigo-950\/20 { background-color: #f0fdf4 !important; border-color: #bbf7d0 !important; }
+        html.theme-green-pastel .bg-slate-900\/50 { background-color: #bbf7d0 !important; }
+        html.theme-green-pastel .bg-slate-900\/30 { background-color: #ecfdf5 !important; }
+        html.theme-green-pastel .bg-slate-950\/60 { background-color: #ffffff !important; color: #166534 !important; }
+        html.theme-green-pastel .bg-indigo-900\/20 { background-color: #dcfce7 !important; border-color: #86efac !important; }
+        html.theme-green-pastel .hover\:bg-indigo-900\/30:hover { background-color: #bbf7d0 !important; }
+        html.theme-green-pastel .bg-slate-900\/20 { background-color: #dcfce7 !important; color: #22c55e !important; }
+        html.theme-green-pastel .executive-glow { box-shadow: 0 10px 15px -3px rgba(21, 128, 61, 0.1), 0 4px 6px -2px rgba(21, 128, 61, 0.05) !important; }
+        html.theme-green-pastel .bg-slate-800 { background-color: #dcfce7 !important; }
+        html.theme-green-pastel .border-white\/5 { border-color: #bbf7d0 !important; }
+        html.theme-green-pastel .hover\:text-white:hover { color: #14532d !important; }
     </style>
 </head>
 
@@ -152,10 +194,22 @@
                         <p class="text-xs text-slate-300" id="notifText">No tienes prioridades pendientes urgentes.</p>
                     </div>
                 </button>
-                <button class="p-2 text-slate-400 hover:text-gold transition-colors" onclick="toggleTema()"
-                    title="Cambiar Tema">
-                    <span class="material-symbols-outlined" id="temaIcon">light_mode</span>
-                </button>
+                <div class="relative group">
+                    <button class="p-2 text-slate-400 hover:text-gold transition-colors" onclick="toggleThemeMenu()"
+                        title="Cambiar Tema">
+                        <span class="material-symbols-outlined" id="temaIcon">palette</span>
+                    </button>
+                    <!-- Theme Selector Dropdown -->
+                    <div id="themeSelector"
+                        class="absolute right-0 mt-2 w-48 bg-card-dark border border-indigo-900/50 rounded-lg shadow-2xl hidden group-hover:block z-50 py-2">
+                        <div class="px-4 py-2 text-xs font-bold text-gold uppercase tracking-widest">Selecciona un tema</div>
+                        <div class="border-t border-indigo-900/30"></div>
+                        <button onclick="setTheme('dark')" class="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-900/50 hover:text-gold transition-colors">Modo Oscuro</button>
+                        <button onclick="setTheme('light')" class="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-900/50 hover:text-gold transition-colors">Modo Claro</button>
+                        <button onclick="setTheme('theme-blue-pastel')" class="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-900/50 hover:text-gold transition-colors">Azul Pastel</button>
+                        <button onclick="setTheme('theme-green-pastel')" class="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-900/50 hover:text-gold transition-colors">Verde Pastel</button>
+                    </div>
+                </div>
                 <div class="text-right hidden sm:block">
                     <p class="text-xs font-bold text-white leading-tight" id="userNameDisplay"></p>
                     <p class="text-[10px] text-gold/60 uppercase tracking-widest font-medium" id="userEmail"></p>

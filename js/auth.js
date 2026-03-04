@@ -13,7 +13,11 @@ let currentMode = 'LOGIN';
 window.showLogin = function () {
     currentMode = 'LOGIN';
     document.getElementById('toggleLogin').classList.add('active');
+    document.getElementById('toggleLogin').classList.remove('text-slate-500');
+    document.getElementById('toggleLogin').classList.add('text-gold');
     document.getElementById('toggleRegister').classList.remove('active');
+    document.getElementById('toggleRegister').classList.remove('text-gold');
+    document.getElementById('toggleRegister').classList.add('text-slate-500');
     document.getElementById('submitText').textContent = 'Iniciar Sesión';
     hideError();
 }
@@ -21,7 +25,11 @@ window.showLogin = function () {
 window.showRegister = function () {
     currentMode = 'REGISTER';
     document.getElementById('toggleRegister').classList.add('active');
+    document.getElementById('toggleRegister').classList.remove('text-slate-500');
+    document.getElementById('toggleRegister').classList.add('text-gold');
     document.getElementById('toggleLogin').classList.remove('active');
+    document.getElementById('toggleLogin').classList.remove('text-gold');
+    document.getElementById('toggleLogin').classList.add('text-slate-500');
     document.getElementById('submitText').textContent = 'Crear Cuenta';
     hideError();
 }
@@ -46,6 +54,11 @@ window.handleAuth = async function (event) {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
+    if (!email || !password) {
+        showError('Por favor ingresa email y contraseña');
+        return;
+    }
+
     try {
         // Set loading state
         btn.disabled = true;
@@ -55,14 +68,25 @@ window.handleAuth = async function (event) {
             const response = await api.login(email, password);
             localStorage.setItem('taskly_token', response.token);
             localStorage.setItem('taskly_user', JSON.stringify(response.user));
-            window.location.href = 'index.html';
+            window.location.href = 'index.html'; // Cambiado a index.html como página principal
         } else {
             await api.register(email, password);
             alert('¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.');
             showLogin();
         }
     } catch (error) {
-        showError(error.message || 'Error al procesar la solicitud');
+        // Mejor manejo de errores
+        let errorMessage = error.message || 'Error al procesar la solicitud';
+        if (error.message.includes('401')) {
+            errorMessage = 'Email o contraseña incorrectos';
+        } else if (error.message.includes('400')) {
+            errorMessage = 'Datos inválidos. Verifica tu información.';
+        } else if (error.message.includes('Network Error') || error.message.includes('Backend no responde')) {
+            errorMessage = 'No se pudo conectar al servidor. Se está usando modo offline local.';
+        } else if (error.message.includes('Credenciales inválidas')) {
+            errorMessage = 'Credenciales inválidas (Modo Local)';
+        }
+        showError(errorMessage);
     } finally {
         btn.disabled = false;
         document.getElementById('submitText').textContent = originalText;
@@ -72,5 +96,5 @@ window.handleAuth = async function (event) {
 
 // Redirigir si ya está logueado
 if (localStorage.getItem('taskly_token')) {
-    window.location.href = 'index.html';
+    window.location.href = 'index.html'; // Actualizado para usar index.html como página principal
 }

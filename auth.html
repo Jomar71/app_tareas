@@ -1,49 +1,137 @@
 <!DOCTYPE html>
-<html lang="es">
+<html class="dark" lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskly | Acceso</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/style.css">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Iniciar Sesión - Asistente de Tareas</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d4af37", // Muted Gold
+                        "accent": "#6366f1", // Indigo
+                        "bg-dark": "#1a1c2e", // Deep Indigo/Slate
+                        "card-dark": "#232642",
+                        "surface": "#2d3154",
+                        "gold": {
+                            "DEFAULT": "#d4af37",
+                            "light": "#f1e4b5",
+                            "dark": "#997b24"
+                        }
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.375rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        :root {
+            --primary: #d4af37;
+            --accent: #6366f1;
+            --bg-dark: #1a1c2e;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1c2e, #232642);
+            letter-spacing: -0.011em;
+        }
+
+        .executive-glow {
+            box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.05);
+        }
+    </style>
 </head>
 
-<body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <header class="app-header"
-                style="justify-content: center; background: transparent; border: none; padding: 0; margin-bottom: 30px;">
-                <div class="logo-area" style="text-align: center;">
-                    <h1>Taskly<span>asistente</span></h1>
-                </div>
-            </header>
+<body class="min-h-screen flex items-center justify-center p-4 bg-bg-dark">
+    <div class="w-full max-w-md">
+        <div class="text-center mb-10">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <span class="material-symbols-outlined text-4xl text-gold">insights</span>
+                <h1 class="text-3xl font-extrabold text-white">Taskly</h1>
+            </div>
+            <p class="text-slate-400 font-medium">Asistente de Productividad Inteligente</p>
+        </div>
 
-            <div class="auth-toggle">
-                <button id="toggleLogin" class="active" onclick="showLogin()">Entrar</button>
-                <button id="toggleRegister" onclick="showRegister()">Registrarse</button>
+        <div class="bg-card-dark rounded-2xl border border-indigo-900/30 p-8 executive-glow">
+            <div class="mb-6">
+                <div class="flex items-center justify-center mb-6">
+                    <div class="relative w-48">
+                        <div class="absolute inset-0 bg-gold/5 rounded-full"></div>
+                        <div class="relative flex items-center justify-center">
+                            <button id="toggleLogin" onclick="showLogin()"
+                                class="active w-full py-3 px-4 text-sm font-bold text-gold uppercase tracking-widest bg-slate-900/50 border border-indigo-900/30 rounded-l-lg transition-all">
+                                Iniciar Sesión
+                            </button>
+                            <button id="toggleRegister" onclick="showRegister()"
+                                class="w-full py-3 px-4 text-sm font-bold text-slate-500 uppercase tracking-widest bg-slate-900/50 border border-indigo-900/30 -ml-px rounded-r-lg transition-all">
+                                Registrarse
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <form onsubmit="handleAuth(event)">
+                    <div class="space-y-4">
+                        <div>
+                            <label for="email" class="block text-sm font-bold text-slate-500 mb-2">Correo
+                                Electrónico</label>
+                            <input type="email" id="email"
+                                class="w-full bg-slate-900/30 border border-indigo-900/40 rounded-lg py-3 px-4 text-white focus:ring-1 focus:ring-gold focus:border-gold transition-all"
+                                placeholder="tu@email.com" required />
+                        </div>
+                        <div>
+                            <label for="password" class="block text-sm font-bold text-slate-500 mb-2">Contraseña</label>
+                            <input type="password" id="password"
+                                class="w-full bg-slate-900/30 border border-indigo-900/40 rounded-lg py-3 px-4 text-white focus:ring-1 focus:ring-gold focus:border-gold transition-all"
+                                placeholder="••••••••" required />
+                        </div>
+                    </div>
+
+                    <div id="authError"
+                        class="hidden mt-4 p-3 bg-red-900/30 border border-red-800/50 rounded-lg text-sm text-red-300 text-center">
+                        Mensaje de error
+                    </div>
+
+                    <button type="submit"
+                        class="btn-primary w-full mt-6 bg-gold hover:bg-gold-dark text-bg-dark px-4 py-3.5 rounded-lg text-sm font-bold transition-all shadow-lg flex items-center justify-center">
+                        <span id="submitText">Iniciar Sesión</span>
+                        <span class="ml-2 loader hidden">
+                            <span class="material-symbols-outlined animate-spin text-base">refresh</span>
+                        </span>
+                    </button>
+                </form>
             </div>
 
-            <form id="authForm" class="auth-form" onsubmit="handleAuth(event)">
+            <div class="mt-6 text-center">
+                <a href="#" class="text-xs text-slate-500 hover:text-gold transition-colors">¿Olvidaste tu
+                    contraseña?</a>
+            </div>
+        </div>
 
-                <div class="form-group">
-                    <label for="email">Correo Electrónico</label>
-                    <input type="email" id="email" placeholder="nombre@ejemplo.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="btn-primary"
-                    style="width: 100%; justify-content: center; margin-top: 10px;">
-                    <span id="submitText">Iniciar Sesión</span>
-                </button>
-                <p id="authError" class="error-message"></p>
-            </form>
+        <div class="text-center mt-8">
+            <p class="text-slate-600 text-sm">© 2026 Taskly Elite. Todos los derechos reservados.</p>
         </div>
     </div>
 
-    <script type="module" src="js/auth.js?v=1.2"></script>
+    <script type="module" src="js/auth.js?v=1.3"></script>
 </body>
 
 </html>

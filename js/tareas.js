@@ -24,6 +24,7 @@ export class GestorTareas {
         const tarea = this.tareas.find(t => t.id === id);
         if (tarea) {
             tarea.completada = true;
+            tarea.fecha_completada = new Date().toISOString().split('T')[0]; // Agregamos la fecha de completado
         }
         this.actualizarUI();
     }

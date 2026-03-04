@@ -3,6 +3,150 @@ import { actualizarFecha, fechaCalendario, generarCalendario } from './ui.js?v=1
 
 let gestorTareas;
 
+// Inicializar la aplicación
+document.addEventListener('DOMContentLoaded', async function () {
+    gestorTareas = new GestorTareas();
+    window.gestorTareas = gestorTareas; // Hacer disponible globalmente para eventos onclick
+
+    try {
+        await gestorTareas.cargarTareas();
+        console.log('Taskly: Tareas cargadas exitosamente');
+    } catch (error) {
+        console.error('Taskly: Error al cargar tareas:', error);
+        if (error.message.includes('Sesión expirada')) {
+            return; // El API ya mandó a redirigir
+        }
+        alert('Hubo un error al cargar las tareas. ' + error.message);
+    }
+
+    inicializarTema();
+});
+
+// Función para cambiar entre icono y texto del logo
+window.toggleLogoBrand = function (event) {
+    const logoIcon = document.getElementById('appLogoIcon');
+    const logoImage = document.getElementById('appLogoImage');
+    const logoText = document.getElementById('appLogoText');
+    const logoSubtext = document.getElementById('appLogoSubtext');
+
+    // Si se presiona shift+clic, abrir diálogo para subir imagen
+    if (event.shiftKey) {
+        event.preventDefault();
+        document.getElementById('logoFileInput').click();
+        return;
+    }
+
+    // Alternar entre icono y texto del logo
+    if (logoIcon && logoIcon.style.display !== 'none') {
+        logoIcon.style.display = 'none';
+        logoImage.classList.remove('hidden');
+        logoText.classList.add('hidden');
+    } else if (logoImage) {
+        logoIcon.style.display = 'block';
+        logoImage.classList.add('hidden');
+        logoText.classList.remove('hidden');
+    }
+}
+
+// Función para subir logo personalizado
+window.subirLogoPersonalizado = function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const logoIcon = document.getElementById('appLogoIcon');
+        const logoImage = document.getElementById('appLogoImage');
+
+        // Ocultar icono y mostrar imagen
+        if (logoIcon) logoIcon.style.display = 'none';
+        logoImage.src = e.target.result;
+        logoImage.classList.remove('hidden');
+    }
+    reader.readAsDataURL(file);
+}
+
+// Función para inicializar el tema guardado
+window.inicializarTema = function () {
+    const storedTheme = localStorage.getItem('taskly_theme');
+    if (storedTheme) {
+        // Eliminar todas las clases de tema
+        document.documentElement.classList.remove('light-theme', 'theme-blue-pastel', 'theme-green-pastel');
+
+        // Aplicar el tema guardado
+        switch (storedTheme) {
+            case 'light':
+                document.documentElement.classList.add('light-theme');
+                break;
+            case 'blue-pastel':
+                document.documentElement.classList.add('theme-blue-pastel');
+                break;
+            case 'green-pastel':
+                document.documentElement.classList.add('theme-green-pastel');
+                break;
+        }
+
+        // Actualizar icono del selector de tema
+        const icon = document.getElementById('temaIcon');
+        if (icon) {
+            switch (storedTheme) {
+                case 'light':
+                    icon.textContent = 'dark_mode';
+                    break;
+                case 'blue-pastel':
+                    icon.textContent = 'palette';
+                    break;
+                case 'green-pastel':
+                    icon.textContent = 'forest';
+                    break;
+                default:
+                    icon.textContent = 'light_mode';
+            }
+        }
+    }
+}
+
+// Función para establecer un tema específico
+window.setTheme = function (theme) {
+    // Eliminar todas las clases de tema
+    document.documentElement.classList.remove('light-theme', 'theme-blue-pastel', 'theme-green-pastel');
+
+    let iconText = 'light_mode';
+
+    switch (theme) {
+        case 'light':
+            document.documentElement.classList.add('light-theme');
+            iconText = 'dark_mode';
+            localStorage.setItem('taskly_theme', 'light');
+            break;
+        case 'theme-blue-pastel':
+            document.documentElement.classList.add('theme-blue-pastel');
+            iconText = 'palette';
+            localStorage.setItem('taskly_theme', 'blue-pastel');
+            break;
+        case 'theme-green-pastel':
+            document.documentElement.classList.add('theme-green-pastel');
+            iconText = 'forest';
+            localStorage.setItem('taskly_theme', 'green-pastel');
+            break;
+        default:
+            localStorage.setItem('taskly_theme', 'dark');
+            break;
+    }
+
+    const icon = document.getElementById('temaIcon');
+    if (icon) icon.textContent = iconText;
+
+    // Cerrar el menú de selección de tema
+    document.getElementById('themeSelector').classList.add('hidden');
+}
+
+// Función para alternar el menú de selección de tema
+window.toggleThemeMenu = function () {
+    const selector = document.getElementById('themeSelector');
+    selector.classList.toggle('hidden');
+}
+
 window.agregarTarea = async function () {
     try {
         const input = document.getElementById('nuevaTarea');
@@ -12,8 +156,14 @@ window.agregarTarea = async function () {
 
         const descripcion = input.value.trim();
         const prioridad = select.value;
-        const fecha = fechaInput.value;
-        const hora = horaInput.value;
+        let fecha = fechaInput.value;
+        let hora = horaInput.value;
+
+        if (!fecha) {
+            const hoy = new Date();
+            fecha = `${hoy.getFullYear()}-${(hoy.getMonth() + 1).toString().padStart(2, '0')}-${hoy.getDate().toString().padStart(2, '0')}`;
+        }
+        if (!hora) hora = "00:00";
 
         if (descripcion === '') {
             alert('Por favor, escribe una tarea');
@@ -50,19 +200,69 @@ window.logout = function () {
 
 window.toggleTema = function () {
     const html = document.documentElement;
-    const isLight = html.classList.contains('light-theme');
     const icon = document.getElementById('temaIcon');
 
-    if (isLight) {
-        html.classList.remove('light-theme');
-        if (icon) icon.textContent = 'light_mode';
-        localStorage.setItem('taskly_theme', 'dark');
-    } else {
-        html.classList.add('light-theme');
-        if (icon) icon.textContent = 'dark_mode';
-        localStorage.setItem('taskly_theme', 'light');
+    // Eliminar todas las clases de tema
+    html.classList.remove('light-theme', 'theme-blue-pastel', 'theme-green-pastel');
+
+    // Obtener el tema actual almacenado
+    let currentTheme = localStorage.getItem('taskly_theme') || 'dark';
+
+    // Definir el siguiente tema en el ciclo
+    let nextThemes = {
+        'dark': 'light',
+        'light': 'blue-pastel',
+        'blue-pastel': 'green-pastel',
+        'green-pastel': 'dark'
+    };
+
+    let nextTheme = nextThemes[currentTheme];
+
+    switch (nextTheme) {
+        case 'light':
+            html.classList.add('light-theme');
+            if (icon) icon.textContent = 'dark_mode';
+            localStorage.setItem('taskly_theme', 'light');
+            break;
+        case 'blue-pastel':
+            html.classList.add('theme-blue-pastel');
+            if (icon) icon.textContent = 'palette';
+            localStorage.setItem('taskly_theme', 'blue-pastel');
+            break;
+        case 'green-pastel':
+            html.classList.add('theme-green-pastel');
+            if (icon) icon.textContent = 'forest';
+            localStorage.setItem('taskly_theme', 'green-pastel');
+            break;
+        case 'dark':
+        default:
+            if (icon) icon.textContent = 'light_mode';
+            localStorage.setItem('taskly_theme', 'dark');
+            break;
     }
 }
+
+// Inicializar tema al cargar la página
+window.addEventListener('DOMContentLoaded', function () {
+    inicializarTema();
+});
+
+// Inicializar nombre de usuario en el header
+window.addEventListener('DOMContentLoaded', function () {
+    const userData = localStorage.getItem('taskly_user');
+    if (userData) {
+        try {
+            const user = JSON.parse(userData);
+            if (user.email) {
+                document.getElementById('userEmail').textContent = user.email;
+                const initials = user.email.substring(0, 2).toUpperCase();
+                document.getElementById('userInitials').textContent = initials;
+            }
+        } catch (e) {
+            console.error('Error parsing user data:', e);
+        }
+    }
+});
 
 window.vistaActualCalendario = 'mes';
 
@@ -72,262 +272,98 @@ window.cambiarVista = function (vista) {
         btn.classList.remove('bg-surface', 'text-gold', 'border', 'border-gold/20', 'shadow-lg', 'active-vista');
         btn.classList.add('text-slate-500');
     });
-    const btn = document.getElementById('btn-vista-' + vista);
-    if (btn) {
-        btn.classList.add('bg-surface', 'text-gold', 'border', 'border-gold/20', 'shadow-lg', 'active-vista');
-        btn.classList.remove('text-slate-500');
-    }
-    if (gestorTareas) {
-        generarCalendario(gestorTareas.tareas);
-    }
-}
 
-window.cambiarMes = function (direccion) {
-    fechaCalendario.setMonth(fechaCalendario.getMonth() + direccion);
-    generarCalendario(gestorTareas.tareas);
-}
-
-window.toggleLogoBrand = function (event) {
-    if (event && event.shiftKey) {
-        document.getElementById('logoFileInput').click();
-        return;
+    // Actualizar la apariencia del botón activo
+    const activeBtn = document.getElementById(`btn-vista-${vista}`);
+    if (activeBtn) {
+        activeBtn.classList.add('bg-surface', 'text-gold', 'border', 'border-gold/20', 'shadow-lg', 'active-vista');
+        activeBtn.classList.remove('text-slate-500');
     }
 
-    const icon = document.getElementById('appLogoIcon');
-    const img = document.getElementById('appLogoImage');
-    const text = document.getElementById('appLogoText');
-    const isIconVisible = !icon.classList.contains('hidden');
-
-    if (isIconVisible) {
-        icon.classList.add('hidden');
-        img.classList.remove('hidden');
-        text.style.display = 'block';
-    } else if (!img.classList.contains('hidden') && text.style.display !== 'none') {
-        text.style.display = 'none';
-        img.classList.remove('hidden');
-        icon.classList.add('hidden');
-    } else {
-        text.style.display = 'block';
-        img.classList.add('hidden');
-        icon.classList.remove('hidden');
+    // Generar calendario con la nueva vista
+    if (window.gestorTareas) {
+        generarCalendario(window.gestorTareas.tareas);
     }
 }
 
-function procesarImagenBase64(file, callback) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        const img = new Image();
-        img.onload = function () {
-            const MAX_SIZE = 300;
-            let width = img.width;
-            let height = img.height;
-
-            if (width > height) {
-                if (width > MAX_SIZE) {
-                    height *= MAX_SIZE / width;
-                    width = MAX_SIZE;
-                }
-            } else {
-                if (height > MAX_SIZE) {
-                    width *= MAX_SIZE / height;
-                    height = MAX_SIZE;
-                }
-            }
-
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-
-            const dataUrl = canvas.toDataURL('image/webp', 0.8);
-            callback(dataUrl);
-        };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-}
-
-window.subirLogoPersonalizado = function (event) {
-    const file = event.target.files[0];
-    if (file) {
-        procesarImagenBase64(file, function (base64Image) {
-            try {
-                const user = JSON.parse(localStorage.getItem('taskly_user'));
-                const prefix = user ? user.email + '_' : '';
-                localStorage.setItem(prefix + 'taskly_custom_logo', base64Image);
-
-                const img = document.getElementById('appLogoImage');
-                img.src = base64Image;
-
-                document.getElementById('appLogoIcon').classList.add('hidden');
-                img.classList.remove('hidden');
-                document.getElementById('appLogoText').style.display = 'block';
-            } catch (e) {
-                alert('No hay suficiente espacio para guardar la imagen. Prueba a borrar datos de navegación.');
-            }
-        });
+// Funciones faltantes para la UI de index.html
+window.cambiarMes = function (incremento) {
+    if (window.fechaCalendario) {
+        window.fechaCalendario.setMonth(window.fechaCalendario.getMonth() + incremento);
+        if (window.gestorTareas) {
+            generarCalendario(window.gestorTareas.tareas);
+        }
     }
 }
 
 window.subirFotoPerfil = function (event) {
     const file = event.target.files[0];
-    if (file) {
-        procesarImagenBase64(file, function (base64Image) {
-            try {
-                const user = JSON.parse(localStorage.getItem('taskly_user'));
-                const prefix = user ? user.email + '_' : '';
-                localStorage.setItem(prefix + 'taskly_profile_pic', base64Image);
+    if (!file) return;
 
-                document.getElementById('userProfileImg').src = base64Image;
-                document.getElementById('userProfileImg').classList.remove('hidden');
-                if (document.getElementById('userInitials')) {
-                    document.getElementById('userInitials').classList.add('hidden');
-                }
-            } catch (e) {
-                alert('No hay suficiente espacio para guardar la foto. Prueba a borrar datos de navegación.');
-            }
-        });
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const profileImg = document.getElementById('userProfileImg');
+        const userInitials = document.getElementById('userInitials');
+
+        if (profileImg) {
+            profileImg.src = e.target.result;
+            profileImg.classList.remove('hidden');
+        }
+        if (userInitials) {
+            userInitials.classList.add('hidden');
+        }
+        localStorage.setItem('taskly_profile_img', e.target.result);
     }
+    reader.readAsDataURL(file);
 }
 
-// Inicialización cuando se carga la página
-document.addEventListener('DOMContentLoaded', function () {
-
-    // Auto-corrección: Limpiar basura de versiones anteriores si existe
-    if (localStorage.getItem('taskly_token') === 'undefined' || localStorage.getItem('taskly_user') === 'undefined') {
-        localStorage.removeItem('taskly_token');
-        localStorage.removeItem('taskly_user');
-        window.location.reload();
-        return;
-    }
-
-    const savedTheme = localStorage.getItem('taskly_theme');
-    if (savedTheme === 'light') {
-        document.documentElement.classList.add('light-theme');
-        const icon = document.getElementById('temaIcon');
-        if (icon) icon.textContent = 'dark_mode';
-    }
-
-    const user = JSON.parse(localStorage.getItem('taskly_user'));
-    const userPrefix = user ? user.email + '_' : '';
-
-    if (user) {
-        if (document.getElementById('userEmail')) document.getElementById('userEmail').textContent = user.email;
-        if (document.getElementById('userNameDisplay')) document.getElementById('userNameDisplay').textContent = user.nombre || 'Elite User';
-        if (document.getElementById('userInitials')) {
-            const initials = (user.nombre || 'EU').split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-            document.getElementById('userInitials').textContent = initials;
+window.addEventListener('DOMContentLoaded', function () {
+    const savedImg = localStorage.getItem('taskly_profile_img');
+    if (savedImg) {
+        const profileImg = document.getElementById('userProfileImg');
+        const userInitials = document.getElementById('userInitials');
+        if (profileImg && userInitials) {
+            profileImg.src = savedImg;
+            profileImg.classList.remove('hidden');
+            userInitials.classList.add('hidden');
         }
     }
-
-    const profilePic = localStorage.getItem(userPrefix + 'taskly_profile_pic');
-    if (profilePic && document.getElementById('userProfileImg')) {
-        document.getElementById('userProfileImg').src = profilePic;
-        document.getElementById('userProfileImg').classList.remove('hidden');
-        if (document.getElementById('userInitials')) {
-            document.getElementById('userInitials').classList.add('hidden');
-        }
-    }
-
-    const customLogo = localStorage.getItem(userPrefix + 'taskly_custom_logo');
-    if (customLogo) {
-        document.getElementById('appLogoImage').src = customLogo;
-    }
-
-    gestorTareas = new GestorTareas();
-    window.gestorTareas = gestorTareas; // Para acceso desde los onchange/onclick en el HTML
-    actualizarFecha();
-    gestorTareas.cargarTareas();
-
-    // Inicializar fecha y hora
-    const ahora = new Date();
-    const offset = ahora.getTimezoneOffset();
-    const ahoraLocal = new Date(ahora.getTime() - (offset * 60 * 1000));
-    const fechaInput = document.getElementById('fechaTarea');
-    const horaInput = document.getElementById('horaTarea');
-    const priorityInput = document.getElementById('prioridadTarea');
-
-    fechaInput.value = ahoraLocal.toISOString().split('T')[0];
-    horaInput.value = ahoraLocal.toISOString().substring(11, 16);
-
-    // Asegurar que al hacer clic en cualquier parte del selector se abra el picker
-    [fechaInput, horaInput].forEach(el => {
-        el.addEventListener('click', () => {
-            try {
-                if (el.showPicker) el.showPicker();
-                else el.focus();
-            } catch (e) {
-                el.focus();
-            }
-        });
-    });
-
-    // También abrir al hacer clic en el label
-    document.querySelectorAll('.detail-item label').forEach(label => {
-        label.addEventListener('click', (e) => {
-            const id = label.getAttribute('for');
-            const target = document.getElementById(id);
-            if (target) {
-                try {
-                    if (target.showPicker) target.showPicker();
-                    else target.focus();
-                } catch (err) {
-                    target.focus();
-                }
-            }
-        });
-    });
-
-    // Enter para agregar tarea
-    document.getElementById('nuevaTarea').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            agregarTarea();
-        }
-    });
 });
 
 window.iniciarReconocimientoVoz = function () {
-    const btnVoz = document.getElementById('btnVoz');
-    const inputTarea = document.getElementById('nuevaTarea');
-
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-        alert('Lo siento, tu navegador no soporta el reconocimiento de voz.');
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert('El reconocimiento de voz no está soportado en este navegador.');
         return;
     }
 
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
+
     recognition.lang = 'es-ES';
+    recognition.continuous = false;
     recognition.interimResults = false;
 
-    recognition.onstart = () => {
-        btnVoz.classList.add('grabando');
-        btnVoz.textContent = '…';
+    const btnVoz = document.getElementById('btnVoz');
+
+    recognition.onstart = function () {
+        if (btnVoz) btnVoz.classList.add('grabando', 'text-red-500');
     };
 
-    recognition.onresult = (event) => {
-        const texto = event.results[0][0].transcript;
-        inputTarea.value = texto;
-        // Pequeño delay para que el usuario vea el texto antes de agregar
-        setTimeout(() => {
-            agregarTarea();
-        }, 500);
-    };
-
-    recognition.onerror = (event) => {
-        console.error('Error en reconocimiento de voz:', event.error);
-        if (event.error === 'not-allowed') {
-            alert('Permiso de micrófono denegado. Por favor, actívalo en tu navegador.');
-        } else {
-            alert('No se pudo reconocer tu voz. Inténtalo de nuevo.');
+    recognition.onresult = function (event) {
+        const transcript = event.results[0][0].transcript;
+        const inputTarea = document.getElementById('nuevaTarea');
+        if (inputTarea) {
+            inputTarea.value = transcript.charAt(0).toUpperCase() + transcript.slice(1);
         }
     };
 
-    recognition.onend = () => {
-        btnVoz.classList.remove('grabando');
-        btnVoz.textContent = '🎤';
+    recognition.onerror = function (event) {
+        console.error('Error de reconocimiento de voz:', event.error);
+        if (btnVoz) btnVoz.classList.remove('grabando', 'text-red-500');
+    };
+
+    recognition.onend = function () {
+        if (btnVoz) btnVoz.classList.remove('grabando', 'text-red-500');
     };
 
     recognition.start();
