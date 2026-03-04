@@ -1,5 +1,5 @@
 import jwt
-
+import os
 import datetime
 from functools import wraps
 from flask import request, jsonify, Blueprint
@@ -7,7 +7,9 @@ from models import db, User, bcrypt, limiter
 
 auth_bp = Blueprint('auth', __name__)
 
-SECRET_KEY = 'tu_clave_secreta_super_segura_cambiala' # En producción usar variable de entorno
+# Usar una clave secreta desde una variable de entorno o generar una por defecto
+SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'una_clave_secreta_muy_segura_que_deberia_ser_larga_y_aleatoria_para_produccion')
+# En producción usar variable de entorno
 
 def token_required(f):
     @wraps(f)

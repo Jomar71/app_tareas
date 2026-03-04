@@ -3,6 +3,7 @@ from flask_cors import CORS
 from models import db, bcrypt, User, Task
 from auth import auth_bp, token_required
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -17,17 +18,22 @@ bcrypt.init_app(app)
 from models import limiter
 limiter.init_app(app)
 
-
-@app.route('/health', methods=['GET'])
-def health_check():
-    return jsonify({'status': 'ok', 'message': 'Taskly Backend is running'}), 200
-
 # Registrar rutas de autenticación
 app.register_blueprint(auth_bp, url_prefix='/auth')
 
 # Crear tablas si no existen
 with app.app_context():
     db.create_all()
+    print("Base de datos y tablas creadas exitosamente.")
+
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({'status': 'ok', 'message': 'Taskly Backend is running', 'version': '1.0'}), 200
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({'status': 'ok', 'message': 'Taskly Backend is running'}), 200
+
 
 @app.route('/tareas/hoy', methods=['GET'])
 @token_required
@@ -59,7 +65,7 @@ def completar_tarea(current_user, id):
         return jsonify({'message': 'Tarea no encontrada'}), 404
     
     tarea.completada = True
-    tarea.fecha_completada = os.popen('date /t').read().strip() # Simplemente para tener algo
+    tarea.fecha_completada = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')  # Corrección aquí
     db.session.commit()
     return jsonify({'message': 'Tarea completada'})
 
@@ -76,4 +82,5 @@ def eliminar_tarea(current_user, id):
 
 if __name__ == '__main__':
     # Usar host='0.0.0.0' para permitir conexiones desde la red local si es necesario
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)

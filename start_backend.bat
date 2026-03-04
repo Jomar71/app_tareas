@@ -1,0 +1,6 @@
+@echo off
+echo Activando entorno virtual...
+call backend\.venv\Scripts\activate.bat
+echo Iniciando servidor backend en puerto 5000...
+python backend\app.py
+pause

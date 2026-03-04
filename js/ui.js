@@ -14,9 +14,11 @@ export function actualizarListaTareas(tareas) {
     sinTareas.classList.remove('flex');
 
     lista.innerHTML = tareas.map(tarea => {
-        const fecha = tarea.fecha_programada ? new Date(tarea.fecha_programada) : null;
-        const fechaFormateada = fecha ? fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : '';
-        const horaFormateada = fecha ? fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
+        const dateStr = (tarea.fecha_programada || '').trim();
+        const fecha = dateStr ? new Date(dateStr) : null;
+        const isValidDate = fecha && !isNaN(fecha.getTime());
+        const fechaFormateada = isValidDate ? fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : '';
+        const horaFormateada = isValidDate && dateStr.includes(':') ? fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : '';
 
         // Priority Styles
         let priorityColor = 'border-slate-500/20 bg-slate-500/5';
@@ -49,7 +51,7 @@ export function actualizarListaTareas(tareas) {
                     ${tarea.completada ? '<span class="material-symbols-outlined text-xs font-bold">check</span>' : ''}
                 </button>
                 
-                <div class="flex-1 min-w-0" onclick="gestorTareas.completarTarea(${tarea.id})" class="cursor-pointer">
+                <div class="flex-1 min-w-0" onclick="window.gestorTareas.completarTarea(${tarea.id})" class="cursor-pointer">
                     <p class="font-bold text-white text-base leading-tight ${tarea.completada ? 'line-through text-slate-500' : ''}">
                         ${tarea.descripcion}
                     </p>
@@ -183,9 +185,13 @@ export function generarCalendario(tareas = []) {
     const headerGrid = document.getElementById('calendarHeaderDays');
 
     const tareasPorFecha = {};
+    const hoyStr = `${hoy.getFullYear()}-${(hoy.getMonth() + 1).toString().padStart(2, '0')}-${hoy.getDate().toString().padStart(2, '0')}`;
+
     tareas.forEach(t => {
-        if (t.fecha_programada && !t.completada) {
-            const datePart = t.fecha_programada.split(' ')[0]; // format: YYYY-MM-DD
+        if (!t.completada) {
+            let datePart = (t.fecha_programada || '').split(' ')[0].trim();
+            if (!datePart) datePart = hoyStr; // Mostrar hoy si no tiene fecha
+
             if (!tareasPorFecha[datePart]) tareasPorFecha[datePart] = [];
             tareasPorFecha[datePart].push(t.prioridad);
         }
@@ -199,7 +205,14 @@ export function generarCalendario(tareas = []) {
         const dayPad = fechaCalendario.getDate().toString().padStart(2, '0');
         const tempKey = `${año}-${monthPad}-${dayPad}`;
 
-        let tareasDia = tareas.filter(t => !t.completada && t.fecha_programada && t.fecha_programada.startsWith(tempKey));
+        const hoyStr = `${hoy.getFullYear()}-${(hoy.getMonth() + 1).toString().padStart(2, '0')}-${hoy.getDate().toString().padStart(2, '0')}`;
+
+        let tareasDia = tareas.filter(t => {
+            if (t.completada) return false;
+            let datePart = (t.fecha_programada || '').split(' ')[0].trim();
+            if (!datePart) datePart = hoyStr;
+            return datePart === tempKey;
+        });
 
         grid.innerHTML = `
             <div class="p-8 flex flex-col items-center justify-center min-h-[250px]">

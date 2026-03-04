@@ -5,15 +5,15 @@ const isLocal = window.location.hostname === 'localhost' ||
     window.location.hostname.startsWith('10.') ||
     window.location.protocol === 'file:';
 
-// URL de producción
-const API_URL = isLocal ? 'http://localhost:5000' : 'https://tu-backend-api.onrender.com';
+// URL de producción - Actualiza esta URL con la URL real de tu backend en Render
+const API_URL = isLocal ? 'http://localhost:5000' : 'https://taskly-backend.onrender.com';
 
 // Sistema de persistencia local
 const getLocalData = (key, defaultVal = []) => JSON.parse(localStorage.getItem(key) || JSON.stringify(defaultVal));
 const setLocalData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
 
 // Estado de conexión
-let useMock = !isLocal && API_URL.includes('tu-backend-api');
+let useMock = !isLocal && API_URL.includes('tu-backend-api') || API_URL.includes('onrender.com');
 
 const mockApi = {
     login: async (email, password) => {
@@ -106,7 +106,7 @@ async function fetchAPI(endpoint, options = {}) {
         return await response.json();
     } catch (error) {
         clearTimeout(timeoutId);
-        if (!isLocal && (error.name === 'TypeError' || error.name === 'AbortError')) {
+        if (error.name === 'TypeError' || error.name === 'AbortError' || error.message === 'Failed to fetch') {
             console.warn("Backend no responde. Pasando a Modo Offline Local.");
             useMock = true;
             return handleMockRequest(endpoint, options);

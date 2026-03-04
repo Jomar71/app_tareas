@@ -1,11 +1,15 @@
 services:
-  - type: web
-    name: taskly-backend
-    env: python
-    buildCommand: pip install -r backend/requirements.txt
-    startCommand: gunicorn --chdir backend app:app
-    envVars:
-      - key: SECRET_KEY
-        generateValue: true
-      - key: PYTHON_VERSION
-        value: 3.11.9
+- type: web
+  name: taskly-backend
+  env: python
+  buildCommand: pip install -r requirements.txt
+  startCommand: gunicorn -w 1 -b 0.0.0.0:$PORT app:app
+  repo: https://github.com/tu-usuario/taskly-backend.git  # Reemplaza con tu repositorio
+  autoDeploy: true
+  envVars:
+  - key: JWT_SECRET_KEY
+    generateValue: true
+  - key: FLASK_APP
+    value: app.py
+  - key: FLASK_ENV
+    value: production
