@@ -8,8 +8,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
     <script id="tailwind-config">
         tailwind.config = {
@@ -59,9 +58,10 @@
 </head>
 
 <body class="bg-bg-dark text-slate-300 min-h-screen flex flex-col">
-    <header class="sticky top-0 z-50 bg-bg-dark/95 backdrop-blur-md border-b border-indigo-900/50 px-6 py-4">
-        <div class="max-w-[1440px] mx-auto flex items-center justify-between gap-8">
-            <div class="flex items-center gap-8 shrink-0">
+    <header
+        class="sticky top-0 z-50 bg-bg-dark/95 backdrop-blur-md border-b border-indigo-900/50 px-4 md:px-6 py-3 md:py-4">
+        <div class="max-w-[1440px] mx-auto flex items-center justify-between gap-2 md:gap-8">
+            <div class="flex items-center gap-2 md:gap-8 shrink-0">
                 <div class="flex items-center gap-2 text-gold group cursor-pointer transition-all hover:opacity-80"
                     title="Asistente de Tareas">
                     <span class="material-symbols-outlined text-3xl font-bold">insights</span>
@@ -72,7 +72,7 @@
             </div>
 
             <div class="flex items-center gap-4 shrink-0">
-                <div class="text-right">
+                <div class="text-right hidden sm:block">
                     <p class="text-xs font-bold text-white leading-tight" id="userNameDisplay"></p>
                     <p class="text-[10px] text-gold/60 uppercase tracking-widest font-medium" id="userEmail"></p>
                 </div>
@@ -85,9 +85,9 @@
         </div>
     </header>
 
-    <main class="flex-1 max-w-[1440px] mx-auto w-full p-6">
-        <div class="bg-card-dark rounded-xl border border-indigo-900/30 p-8 executive-glow">
-            <h2 class="text-2xl font-bold text-white mb-6">Resumen del Dashboard</h2>
+    <main class="flex-1 max-w-[1440px] mx-auto w-full p-4 md:p-6">
+        <div class="bg-card-dark rounded-xl border border-indigo-900/30 p-4 md:p-8 executive-glow">
+            <h2 class="text-xl md:text-2xl font-bold text-white mb-4 md:mb-6">Resumen del Dashboard</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-slate-900/30 p-5 rounded-xl border border-indigo-900/20">
                     <h3 class="text-lg font-bold text-white mb-2">Tareas Pendientes</h3>
@@ -102,7 +102,7 @@
                     <p class="text-3xl font-extrabold text-gold" id="productividad">0%</p>
                 </div>
             </div>
-            
+
             <div class="mt-8">
                 <h3 class="text-lg font-bold text-white mb-4">Últimas Tareas</h3>
                 <div id="ultimasTareas" class="space-y-3">
@@ -114,7 +114,7 @@
 
     <script type="module">
         import { api } from './js/api.js?v=1.3';
-        
+
         // Verificar si hay token
         if (!localStorage.getItem('taskly_token')) {
             window.location.href = 'auth.html';
@@ -143,17 +143,17 @@
         async function cargarDatosDashboard() {
             try {
                 const tareas = await api.getTareas();
-                
+
                 // Contar tareas
                 const completadas = tareas.filter(t => t.completada).length;
                 const pendientes = tareas.length - completadas;
                 const productividad = tareas.length > 0 ? Math.round((completadas / tareas.length) * 100) : 0;
-                
+
                 // Actualizar contadores
                 document.getElementById('tareasPendientes').textContent = pendientes;
                 document.getElementById('tareasCompletadas').textContent = completadas;
                 document.getElementById('productividad').textContent = `${productividad}%`;
-                
+
                 // Mostrar últimas tareas
                 const ultimasTareasDiv = document.getElementById('ultimasTareas');
                 ultimasTareasDiv.innerHTML = tareas.slice(0, 5).map(tarea => `
@@ -166,7 +166,7 @@
                         </div>
                     </div>
                 `).join('');
-                
+
             } catch (error) {
                 console.error('Error al cargar datos del dashboard:', error);
                 if (error.message.includes('Sesión expirada')) {
