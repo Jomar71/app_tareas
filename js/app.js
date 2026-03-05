@@ -275,9 +275,14 @@ window.cambiarVista = function (vista) {
 
     // Actualizar la apariencia del botón activo
     const activeBtn = document.getElementById(`btn-vista-${vista}`);
+    const activeBtnMobile = document.getElementById(`btn-vista-${vista}-mobile`);
     if (activeBtn) {
         activeBtn.classList.add('bg-surface', 'text-gold', 'border', 'border-gold/20', 'shadow-lg', 'active-vista');
         activeBtn.classList.remove('text-slate-500');
+    }
+    if (activeBtnMobile) {
+        activeBtnMobile.classList.add('bg-surface', 'text-gold', 'border', 'border-gold/20', 'shadow-lg', 'active-vista');
+        activeBtnMobile.classList.remove('text-slate-500');
     }
 
     // Generar calendario con la nueva vista

@@ -44,15 +44,21 @@ export function actualizarListaTareas(tareas) {
         }
 
         return `
-            <div class="group flex items-center gap-4 p-5 rounded-lg border ${priorityColor} transition-all relative overflow-hidden mb-4 ${tarea.completada ? 'opacity-60 grayscale' : ''}">
+            <div class="group flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-4 md:p-5 rounded-lg border ${priorityColor} transition-all relative overflow-hidden mb-4 ${tarea.completada ? 'opacity-60 grayscale' : ''}">
                 <div class="absolute left-0 top-0 bottom-0 w-1 ${accentLine}"></div>
                 
-                <button onclick="gestorTareas.completarTarea(${tarea.id})" class="h-6 w-6 rounded-full border-2 ${tarea.completada ? 'border-gold bg-gold text-bg-dark' : 'border-indigo-900/50 hover:border-gold'} flex items-center justify-center shrink-0 transition-all">
-                    ${tarea.completada ? '<span class="material-symbols-outlined text-xs font-bold">check</span>' : ''}
-                </button>
+                <div class="flex items-center w-full sm:w-auto justify-between">
+                    <button onclick="gestorTareas.completarTarea(${tarea.id})" class="h-6 w-6 rounded-full border-2 ${tarea.completada ? 'border-gold bg-gold text-bg-dark' : 'border-indigo-900/50 hover:border-gold'} flex items-center justify-center shrink-0 transition-all">
+                        ${tarea.completada ? '<span class="material-symbols-outlined text-[10px] md:text-xs font-bold">check</span>' : ''}
+                    </button>
+                    <!-- Show delete button on mobile next to checkmark, otherwise hidden until hover -->
+                    <button class="sm:hidden text-slate-500 hover:text-red-400 transition-colors p-1" onclick="gestorTareas.eliminarTarea(${tarea.id})" title="Eliminar">
+                        <span class="material-symbols-outlined text-lg">delete</span>
+                    </button>
+                </div>
                 
-                <div class="flex-1 min-w-0" onclick="window.gestorTareas.completarTarea(${tarea.id})" class="cursor-pointer">
-                    <p class="font-bold text-white text-base leading-tight ${tarea.completada ? 'line-through text-slate-500' : ''}">
+                <div class="flex-1 w-full min-w-0" onclick="window.gestorTareas.completarTarea(${tarea.id})" class="cursor-pointer">
+                    <p class="font-bold text-white text-sm md:text-base leading-tight ${tarea.completada ? 'line-through text-slate-500' : ''}">
                         ${tarea.descripcion}
                     </p>
                     <div class="flex items-center gap-3 mt-2">
@@ -65,7 +71,7 @@ export function actualizarListaTareas(tareas) {
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="hidden sm:flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button class="text-slate-500 hover:text-red-400 transition-colors p-1" onclick="gestorTareas.eliminarTarea(${tarea.id})" title="Eliminar">
                         <span class="material-symbols-outlined text-lg">delete</span>
                     </button>
@@ -215,9 +221,9 @@ export function generarCalendario(tareas = []) {
         });
 
         grid.innerHTML = `
-            <div class="p-8 flex flex-col items-center justify-center min-h-[250px]">
-                <h3 class="text-6xl font-extrabold text-gold mb-2">${fechaCalendario.getDate()}</h3>
-                <h4 class="text-sm text-slate-400 mb-6 font-bold uppercase tracking-widest">${tareasDia.length} tareas programadas para este día</h4>
+            <div class="p-4 md:p-8 flex flex-col items-center justify-center min-h-[250px]">
+                <h3 class="text-4xl md:text-6xl font-extrabold text-gold mb-2">${fechaCalendario.getDate()}</h3>
+                <h4 class="text-xs md:text-sm text-slate-400 mb-4 md:mb-6 font-bold uppercase tracking-widest text-center">${tareasDia.length} tareas programadas para este día</h4>
                 <div class="w-full max-w-md">
                     ${tareasDia.map(t => {
             const priBorder = t.prioridad === 'ALTA' ? 'border-red-500 bg-red-500/10 text-red-500' : (t.prioridad === 'MEDIA' ? 'border-gold bg-gold/10 text-gold' : 'border-accent bg-indigo-500/10 text-accent');
@@ -266,7 +272,7 @@ export function generarCalendario(tareas = []) {
             const isSelected = isToday ? 'border-2 border-gold text-gold bg-gold/5 font-extrabold' : 'border border-indigo-900/30 text-slate-300 font-semibold hover:bg-slate-900/40';
 
             grid.innerHTML += `
-                <div class="h-48 flex flex-col items-center justify-center text-3xl cursor-pointer relative group transition-all bg-slate-900/20 ${isSelected}">
+                <div class="h-24 md:h-48 flex flex-col items-center justify-center text-xl md:text-3xl cursor-pointer relative group transition-all bg-slate-900/20 ${isSelected}">
                     ${curDia}
                     ${dotsHtml}
                 </div>
@@ -311,7 +317,7 @@ export function generarCalendario(tareas = []) {
         const addedClasses = isToday ? 'border border-gold text-gold bg-gold/5 font-extrabold' : 'text-slate-300 font-semibold hover:bg-indigo-900/30';
 
         grid.innerHTML += `
-            <div class="aspect-square flex flex-col items-center justify-center text-sm cursor-pointer relative group transition-all ${addedClasses}" onclick="window.fechaCalendario.setDate(${i}); window.cambiarVista('dia')">
+            <div class="aspect-square flex flex-col items-center justify-center text-xs md:text-sm cursor-pointer relative group transition-all ${addedClasses}" onclick="window.fechaCalendario.setDate(${i}); window.cambiarVista('dia')">
                 ${i}
                 ${dotsHtml}
             </div>

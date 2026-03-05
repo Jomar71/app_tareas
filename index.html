@@ -144,9 +144,10 @@
 </head>
 
 <body class="bg-bg-dark text-slate-300 min-h-screen flex flex-col">
-    <header class="sticky top-0 z-50 bg-bg-dark/95 backdrop-blur-md border-b border-indigo-900/50 px-6 py-4">
-        <div class="max-w-[1440px] mx-auto flex items-center justify-between gap-8">
-            <div class="flex items-center gap-8 shrink-0">
+    <header
+        class="sticky top-0 z-50 bg-bg-dark/95 backdrop-blur-md border-b border-indigo-900/50 px-4 md:px-6 py-3 md:py-4">
+        <div class="max-w-[1440px] mx-auto flex items-center justify-between gap-2 md:gap-8">
+            <div class="flex items-center gap-2 md:gap-8 shrink-0">
                 <div class="flex items-center gap-2 text-gold group cursor-pointer transition-all hover:opacity-80 relative"
                     onclick="toggleLogoBrand(event)"
                     title="Clic para cambiar variante de logo. Shift+Clic para subir tu propio logo">
@@ -169,8 +170,8 @@
                 </div>
                 <input type="file" id="logoFileInput" class="hidden" accept="image/*"
                     onchange="subirLogoPersonalizado(event)">
-                <div class="relative w-64 lg:w-96 ml-6">
-                    <span id="fechaActual" class="text-xs font-medium text-slate-400"></span>
+                <div class="relative hidden md:block w-48 lg:w-96 ml-2 md:ml-6">
+                    <span id="fechaActual" class="text-[10px] md:text-xs font-medium text-slate-400"></span>
                 </div>
             </div>
 
@@ -202,12 +203,21 @@
                     <!-- Theme Selector Dropdown -->
                     <div id="themeSelector"
                         class="absolute right-0 mt-2 w-48 bg-card-dark border border-indigo-900/50 rounded-lg shadow-2xl hidden group-hover:block z-50 py-2">
-                        <div class="px-4 py-2 text-xs font-bold text-gold uppercase tracking-widest">Selecciona un tema</div>
+                        <div class="px-4 py-2 text-xs font-bold text-gold uppercase tracking-widest">Selecciona un tema
+                        </div>
                         <div class="border-t border-indigo-900/30"></div>
-                        <button onclick="setTheme('dark')" class="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-900/50 hover:text-gold transition-colors">Modo Oscuro</button>
-                        <button onclick="setTheme('light')" class="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-900/50 hover:text-gold transition-colors">Modo Claro</button>
-                        <button onclick="setTheme('theme-blue-pastel')" class="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-900/50 hover:text-gold transition-colors">Azul Pastel</button>
-                        <button onclick="setTheme('theme-green-pastel')" class="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-900/50 hover:text-gold transition-colors">Verde Pastel</button>
+                        <button onclick="setTheme('dark')"
+                            class="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-900/50 hover:text-gold transition-colors">Modo
+                            Oscuro</button>
+                        <button onclick="setTheme('light')"
+                            class="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-900/50 hover:text-gold transition-colors">Modo
+                            Claro</button>
+                        <button onclick="setTheme('theme-blue-pastel')"
+                            class="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-900/50 hover:text-gold transition-colors">Azul
+                            Pastel</button>
+                        <button onclick="setTheme('theme-green-pastel')"
+                            class="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-900/50 hover:text-gold transition-colors">Verde
+                            Pastel</button>
                     </div>
                 </div>
                 <div class="text-right hidden sm:block">
@@ -236,19 +246,20 @@
         </div>
     </header>
 
-    <main class="flex-1 max-w-[1440px] mx-auto w-full p-6 grid grid-cols-12 gap-6">
+    <main class="flex-1 max-w-[1440px] mx-auto w-full p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
         <!-- Sidebar: Task Creation & Filters -->
-        <section class="col-span-12 lg:col-span-5 flex flex-col gap-6">
+        <section class="col-span-1 lg:col-span-5 flex flex-col gap-4 md:gap-6">
             <div
                 class="bg-card-dark rounded-xl border border-indigo-900/30 flex flex-col h-full overflow-hidden executive-glow">
-                <div class="p-6 border-b border-indigo-900/30 bg-indigo-950/20">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-bold tracking-tight text-white">Gestión de Tareas <span
-                                class="text-gold/60 font-medium text-sm ml-2" id="headerStats"></span></h2>
+                <div class="p-4 md:p-6 border-b border-indigo-900/30 bg-indigo-950/20">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 md:mb-6 gap-2">
+                        <h2 class="text-lg md:text-xl font-bold tracking-tight text-white">Gestión de Tareas <span
+                                class="text-gold/60 font-medium text-xs md:text-sm ml-2 block sm:inline-block"
+                                id="headerStats"></span></h2>
                     </div>
 
                     <!-- Create Task Form -->
-                    <div class="bg-slate-900/30 p-5 rounded-xl border border-indigo-900/20 mb-6">
+                    <div class="bg-slate-900/30 p-3 md:p-5 rounded-xl border border-indigo-900/20 mb-4 md:mb-6">
                         <div class="relative mb-4">
                             <input type="text" id="nuevaTarea" placeholder="¿Qué vamos a lograr hoy?"
                                 class="w-full bg-slate-950/60 border border-indigo-900/40 rounded-lg py-3 pl-4 pr-12 text-sm text-white focus:ring-1 focus:ring-gold/50 focus:border-gold transition-all placeholder:text-slate-600" />
@@ -272,7 +283,7 @@
                                     class="bg-slate-950/60 border border-indigo-900/40 rounded-lg py-2 px-3 text-xs text-white focus:ring-1 focus:ring-gold/50" />
                             </div>
                         </div>
-                        <div class="flex items-center gap-3">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                             <div class="flex-1 flex flex-col gap-1">
                                 <label for="prioridadTarea"
                                     class="text-[10px] font-bold text-slate-500 uppercase ml-1">Prioridad</label>
@@ -284,26 +295,28 @@
                                 </select>
                             </div>
                             <button onclick="agregarTarea()"
-                                class="bg-gold hover:bg-gold-dark text-bg-dark px-6 py-2.5 rounded-lg text-xs font-bold transition-all shadow-lg active:scale-95 self-end">
+                                class="bg-gold hover:bg-gold-dark text-bg-dark w-full sm:w-auto px-6 py-2.5 rounded-lg text-xs font-bold transition-all shadow-lg active:scale-95 self-end">
                                 AGREGAR
                             </button>
                         </div>
                     </div>
 
-                    <div class="flex gap-4">
-                        <button class="filtro-btn text-xs font-bold uppercase border-b-2 border-gold text-gold pb-2"
+                    <div class="flex flex-wrap gap-2 md:gap-4 mt-4">
+                        <button
+                            class="filtro-btn text-[10px] md:text-xs font-bold uppercase border-b-2 border-gold text-gold pb-1.5 md:pb-2"
                             onclick="filtrarTareas('TODAS')">Todas</button>
                         <button
-                            class="filtro-btn text-xs font-bold uppercase border-b-2 border-transparent text-slate-500 hover:text-slate-300 pb-2 transition-all"
+                            class="filtro-btn text-[10px] md:text-xs font-bold uppercase border-b-2 border-transparent text-slate-500 hover:text-slate-300 pb-1.5 md:pb-2 transition-all"
                             onclick="filtrarTareas('PENDIENTES')">Pendientes</button>
                         <button
-                            class="filtro-btn text-xs font-bold uppercase border-b-2 border-transparent text-slate-500 hover:text-slate-300 pb-2 transition-all"
+                            class="filtro-btn text-[10px] md:text-xs font-bold uppercase border-b-2 border-transparent text-slate-500 hover:text-slate-300 pb-1.5 md:pb-2 transition-all"
                             onclick="filtrarTareas('COMPLETADAS')">Completadas</button>
                     </div>
                 </div>
 
                 <!-- Task List Container -->
-                <div id="listaTareas" class="flex-1 overflow-y-auto p-4 space-y-4 max-h-[500px]">
+                <div id="listaTareas"
+                    class="flex-1 overflow-y-auto p-2 md:p-4 space-y-3 md:space-y-4 max-h-[400px] md:max-h-[500px]">
                     <!-- Tasks load here -->
                 </div>
 
@@ -315,13 +328,25 @@
         </section>
 
         <!-- Main Content: Calendar & Metrics -->
-        <section class="col-span-12 lg:col-span-7 flex flex-col gap-6">
+        <section class="col-span-1 lg:col-span-7 flex flex-col gap-4 md:gap-6">
             <!-- Calendar Section -->
-            <div class="bg-card-dark rounded-xl border border-indigo-900/30 p-8 flex flex-col executive-glow">
-                <div class="flex items-center justify-between mb-8">
-                    <div class="flex flex-col">
-                        <h2 class="text-3xl font-extrabold tracking-tight text-white" id="mesActual">Marzo 2026</h2>
-                        <p class="text-xs text-gold font-medium mt-1">Estatus del Ciclo de Tareas: <span
+            <div class="bg-card-dark rounded-xl border border-indigo-900/30 p-4 md:p-8 flex flex-col executive-glow">
+                <!-- Selectores Mobile -->
+                <nav class="flex md:hidden bg-slate-900/50 p-1 mb-4 rounded-lg border border-indigo-900/30">
+                    <button id="btn-vista-dia-mobile" onclick="cambiarVista('dia')"
+                        class="vista-btn flex-1 px-2 py-1.5 text-[10px] font-semibold rounded text-slate-500 hover:text-white transition-colors">Día</button>
+                    <button id="btn-vista-semana-mobile" onclick="cambiarVista('semana')"
+                        class="vista-btn flex-1 px-2 py-1.5 text-[10px] font-semibold rounded text-slate-500 hover:text-white transition-colors">Semana</button>
+                    <button id="btn-vista-mes-mobile" onclick="cambiarVista('mes')"
+                        class="vista-btn flex-1 px-2 py-1.5 text-[10px] font-semibold rounded bg-surface text-gold border border-gold/20 shadow-lg active-vista">Mes</button>
+                </nav>
+
+                <div
+                    class="flex flex-col sm:flex-row items-center sm:items-start justify-between mb-6 md:mb-8 gap-4 sm:gap-0">
+                    <div class="flex flex-col text-center sm:text-left">
+                        <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white" id="mesActual">Marzo
+                            2026</h2>
+                        <p class="text-[10px] md:text-xs text-gold font-medium mt-1">Estatus del Ciclo de Tareas: <span
                                 class="text-white" id="estatusCiclo">Activo</span></p>
                     </div>
                     <div class="flex gap-2">
@@ -351,8 +376,9 @@
             </div>
 
             <!-- Stats Section -->
-            <div class="bg-card-dark rounded-xl border border-indigo-900/30 p-8 executive-glow">
-                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] mb-6">Métrica de Rendimiento
+            <div class="bg-card-dark rounded-xl border border-indigo-900/30 p-4 md:p-8 executive-glow">
+                <h3 class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 md:mb-6">
+                    Métrica de Rendimiento
                     Diario</h3>
                 <div class="flex justify-between items-end mb-4">
                     <span class="text-xs font-bold uppercase text-slate-500" id="contadorTareas">Progreso: 0/0
